@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+} from '@nestjs/common';
 import { FindManyUsersDto } from './dto/find-many-users.dto';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,8 +30,8 @@ export class UsersController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string): Promise<User | undefined> {
-        return this.usersService.findUserById(+id);
+    async findOne(@Param('id', ParseIntPipe) id: number): Promise<User | undefined> {
+        return this.usersService.findUserById(id);
     }
 
     @Patch(':id')
