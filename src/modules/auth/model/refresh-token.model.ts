@@ -1,5 +1,5 @@
 import { User } from '../../users/model/user.model';
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Index, Model, Table } from 'sequelize-typescript';
 import { REFRESH_SECRET_LENGTH } from '../../../common/constants/environment';
 
 @Table({ updatedAt: false, createdAt: false })
@@ -7,7 +7,7 @@ export class RefreshToken extends Model {
     @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER({ unsigned: true }) })
     id: number;
 
-    @Column({ unique: true, type: DataType.CHAR(REFRESH_SECRET_LENGTH) })
+    @Column({ unique: true, allowNull: false, type: DataType.CHAR(REFRESH_SECRET_LENGTH) })
     token: string;
 
     @Column({ allowNull: false, type: DataType.INTEGER({ unsigned: true }) })
@@ -18,5 +18,6 @@ export class RefreshToken extends Model {
     user: User;
 
     @Column({ allowNull: false, type: DataType.DATE })
+    @Index
     expiredAt: Date;
 }

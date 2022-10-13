@@ -4,6 +4,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './common/constants/environment';
 import { RefreshToken } from './modules/auth/model/refresh-token.model';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { Role } from './modules/roles/model/role.model';
 
 @Module({
     imports: [
@@ -14,7 +15,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, RefreshToken],
+            models: [User, RefreshToken, Role],
             autoLoadModels: true,
             synchronize: true,
             logging: false,

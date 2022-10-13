@@ -20,6 +20,7 @@ export class CookieTokenGuard implements CanActivate {
             }
             return false;
         } catch (e) {
+            console.log('Error in CookieTokenGuard');
             return false;
         }
     }

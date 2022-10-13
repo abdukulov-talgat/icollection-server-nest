@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import * as dayjs from 'dayjs';
 import { User } from '../users/model/user.model';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
+import { Role } from '../roles/model/role.model';
 
 export class TokensService {
     constructor(@InjectModel(RefreshToken) private tokenModel: typeof RefreshToken) {}
@@ -22,7 +23,10 @@ export class TokensService {
     findTokenByToken(token: string): Promise<RefreshToken | null> {
         return this.tokenModel.findOne({
             where: { token },
-            include: User,
+            include: {
+                model: User,
+                include: [Role],
+            },
         });
     }
 }

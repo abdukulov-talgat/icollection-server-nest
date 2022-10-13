@@ -10,11 +10,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshToken } from './model/refresh-token.model';
 import { TokensService } from './tokens.service';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
     imports: [
         SequelizeModule.forFeature([RefreshToken]),
         UsersModule,
+        RolesModule,
         PassportModule,
         JwtModule.register({
             secret: ACCESS_SECRET,

@@ -1,5 +1,14 @@
 import { RefreshToken } from '../../auth/model/refresh-token.model';
-import { Table, Column, DataType, HasMany, Model } from 'sequelize-typescript';
+import {
+    Table,
+    Column,
+    DataType,
+    HasMany,
+    Model,
+    ForeignKey,
+    BelongsTo,
+} from 'sequelize-typescript';
+import { Role } from '../../roles/model/role.model';
 
 @Table
 export class User extends Model {
@@ -12,8 +21,15 @@ export class User extends Model {
     @Column({ allowNull: false })
     passwordHash: string;
 
-    @Column({ defaultValue: false })
+    @Column({ defaultValue: false, allowNull: false })
     isBanned: boolean;
+
+    @Column({ allowNull: false, type: DataType.TINYINT({ unsigned: true }) })
+    @ForeignKey(() => Role)
+    roleId: number;
+
+    @BelongsTo(() => Role)
+    role: Role;
 
     @HasMany(() => RefreshToken)
     tokens: RefreshToken[];
