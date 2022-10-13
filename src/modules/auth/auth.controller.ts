@@ -20,6 +20,9 @@ import * as dayjs from 'dayjs';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
 import { SignUpDto } from './dto/sign-up.dto';
 import { validateSignUp } from '../../common/utils/validators';
+import { RoleGuard } from '../../guards/role.guard';
+import { AvailableRoles } from '../../common/constants/authorization';
+import { Roles } from '../../decorators/roles.decorator';
 
 @Controller('/auth')
 export class AuthController {
@@ -67,5 +70,12 @@ export class AuthController {
     @UseGuards(AccessJwtGuard)
     async foo() {
         return 'JWT Guard';
+    }
+
+    @Get('/admin')
+    @Roles(AvailableRoles.ADMIN)
+    @UseGuards(AccessJwtGuard, RoleGuard)
+    async bar() {
+        return 'Admin only page';
     }
 }

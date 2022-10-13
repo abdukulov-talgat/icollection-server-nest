@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AvailableRoles, ROLE_KEY } from '../common/constants/authorization';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
+import { isSelectUserDto } from '../common/utils/predicates';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -13,8 +14,7 @@ export class RoleGuard implements CanActivate {
         if (!roleOnHandler) {
             return true;
         }
-        const request: Request = context.switchToHttp().getRequest();
-        console.log(request.user);
-        return false;
+        const user = (context.switchToHttp().getRequest() as Request).user;
+        return isSelectUserDto(user) && user.role === roleOnHandler;
     }
 }
