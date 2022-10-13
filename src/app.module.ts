@@ -1,18 +1,25 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './modules/users/model/user.model';
+import { AuthModule } from './modules/auth/auth.module';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './common/constants/environment';
+import { RefreshToken } from './modules/auth/model/refresh-token.model';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type: 'mysql',
-            host: process.env.DB_HOST || 'localhost',
-            database: process.env.DB_NAME || 'icollection',
-            username: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || 'root',
-            port: Number.parseInt(String(process.env.DB_PORT || 3306)),
+        SequelizeModule.forRoot({
+            dialect: 'mysql',
+            host: DB_HOST,
+            database: DB_NAME,
+            username: DB_USER,
+            password: DB_PASSWORD,
+            port: DB_PORT,
+            models: [User, RefreshToken],
+            autoLoadModels: true,
+            synchronize: true,
+            logging: false,
         }),
-        UsersModule,
+        AuthModule,
     ],
 })
 export class AppModule {}

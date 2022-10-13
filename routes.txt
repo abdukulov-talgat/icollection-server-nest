@@ -1,0 +1,27 @@
+*********** API ROUTES **********
+/auth/signin - POST
+/auth/signup - POST
+/auth/refresh - GET?
+/users/ - RUD
+/collections/query? - GET
+/collections/:id - GET
+/collections/  - POST
+/collections/ - UPDATE
+/collections/ - DELETE
+/items/ - GET
+/items/:id - GET
+/items/ - POST
+/items/ - UPDATE
+/items/ - DELETE
+/comments/ - CRU
+/likes/ - CD
+/tags/ - CR
+
+*********** CLIENT ROUTES **********
+/ - Home
+/signin
+/signup
+/admin
+/profile/:userId - List of all user's collections
+/collections/:id - Concrete collections
+/collections/:id/:itemId - concrete item in collection
