@@ -1,6 +1,6 @@
 import { User } from '../../users/model/user.model';
 import { BelongsTo, Column, DataType, ForeignKey, Index, Model, Table } from 'sequelize-typescript';
-import { REFRESH_SECRET_LENGTH } from '../../../common/constants/environment';
+import { REFRESH_SECRET_LENGTH } from '../../../common/constants/authorization';
 
 @Table({ updatedAt: false, createdAt: false })
 export class RefreshToken extends Model {

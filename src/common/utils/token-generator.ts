@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import * as util from 'util';
-import { REFRESH_SECRET_LENGTH } from '../constants/environment';
+import { REFRESH_SECRET_LENGTH } from '../constants/authorization';
 
 const getRandomBytes = util.promisify(crypto.randomBytes);
 

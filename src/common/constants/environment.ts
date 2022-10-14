@@ -12,6 +12,8 @@ export const APP_PORT = Number.parseInt(process.env.PORT || '3000');
 
 export const ACCESS_SECRET = process.env.ACCESS_SECRET || 'ACCESS_SECRET';
 
-export const REFRESH_SECRET_LENGTH = 64;
-
 export const REFRESH_SECRET_MAX_DAYS = Number.parseInt(process.env.REFRESH_SECRET_MAX_DAYS || '30');
+
+export const EXPIRED_TOKENS_CLEAR_INTERVAL = Number.parseInt(
+    process.env.EXPIRED_TOKENS_CLEAR_INTERVAL || '3600000',
+);

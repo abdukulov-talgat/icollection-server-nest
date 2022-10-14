@@ -5,6 +5,8 @@ import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './common/consta
 import { RefreshToken } from './modules/auth/model/refresh-token.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Role } from './modules/roles/model/role.model';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
     imports: [
@@ -20,7 +22,9 @@ import { Role } from './modules/roles/model/role.model';
             synchronize: true,
             logging: false,
         }),
+        ScheduleModule.forRoot(),
         AuthModule,
+        TasksModule,
     ],
 })
 export class AppModule {}

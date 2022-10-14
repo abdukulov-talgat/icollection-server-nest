@@ -27,5 +27,6 @@ import { RolesModule } from '../roles/roles.module';
     ],
     providers: [AuthService, LocalStrategy, JwtStrategy, TokensService],
     controllers: [AuthController],
+    exports: [TokensService],
 })
 export class AuthModule {}

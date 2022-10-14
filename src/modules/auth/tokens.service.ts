@@ -4,6 +4,7 @@ import * as dayjs from 'dayjs';
 import { User } from '../users/model/user.model';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
 import { Role } from '../roles/model/role.model';
+import { Op } from 'sequelize';
 
 export class TokensService {
     constructor(@InjectModel(RefreshToken) private tokenModel: typeof RefreshToken) {}
@@ -26,6 +27,16 @@ export class TokensService {
             include: {
                 model: User,
                 include: [Role],
+            },
+        });
+    }
+
+    async clearExpired(): Promise<number> {
+        return this.tokenModel.destroy({
+            where: {
+                expiredAt: {
+                    [Op.lt]: Date.now(),
+                },
             },
         });
     }

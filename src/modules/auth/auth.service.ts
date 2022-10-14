@@ -42,8 +42,7 @@ export class AuthService {
                 AvailableRoles.USER,
             )) as Role;
             const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-            const user = await this.usersService.create({ email, passwordHash, roleId });
-            return user;
+            return await this.usersService.create({ email, passwordHash, roleId });
         }
         return null;
     }

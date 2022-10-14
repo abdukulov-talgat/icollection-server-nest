@@ -8,5 +8,6 @@ declare namespace NodeJS {
         PORT?: string;
         ACCESS_SECRET?: string;
         REFRESH_SECRET_MAX_DAYS?: string;
+        EXPIRED_TOKENS_CLEAR_INTERVAL?: string;
     }
 }
