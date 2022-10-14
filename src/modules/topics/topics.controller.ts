@@ -4,7 +4,6 @@ import {
     Controller,
     Delete,
     Get,
-    HttpStatus,
     Param,
     Post,
     Put,
@@ -13,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { TopicsService } from './topics.service';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
-import { CreateTopicDto, createTopicTdoSchema } from './dto/create-topic.dto';
+import { CreateTopicDto, createTopicDtoSchema } from './dto/create-topic.dto';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { RoleGuard } from '../../guards/role.guard';
 import { Roles } from '../../decorators/roles.decorator';
@@ -33,7 +32,7 @@ export class TopicsController {
     @Post()
     @UseGuards(AccessJwtGuard, RoleGuard)
     @Roles(AvailableRoles.ADMIN)
-    @UsePipes(new NopeValidationPipe(createTopicTdoSchema))
+    @UsePipes(new NopeValidationPipe(createTopicDtoSchema))
     async create(@Body() createTopicDto: CreateTopicDto) {
         const topic = await this.topicsService.create(createTopicDto);
         if (!topic) {

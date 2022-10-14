@@ -6,18 +6,21 @@ import {
     Param,
     ParseIntPipe,
     Query,
+    UsePipes,
 } from '@nestjs/common';
-import { FindManyUsersDto } from './dto/find-many-users.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { UsersService } from './users.service';
 import { SelectUserDto } from './dto/select-user.dto';
+import { PaginationPipe } from '../../pipes/pagination.pipe';
 
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Get()
-    async findAll(@Query() { page, limit }: FindManyUsersDto): Promise<SelectUserDto[]> {
-        const users = await this.usersService.findAll(page || 1, limit || 5);
+    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
+    async findAll(@Query() { page, limit }: PaginationDto): Promise<SelectUserDto[]> {
+        const users = await this.usersService.findAll(page, limit);
         return users.map((u) => new SelectUserDto(u));
     }
 

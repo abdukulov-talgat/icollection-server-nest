@@ -7,6 +7,7 @@ import {
     Req,
     Res,
     UseGuards,
+    UsePipes,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
@@ -18,11 +19,11 @@ import { CookieTokenGuard } from '../../guards/cookie-token.guard';
 import { REFRESH_TOKEN_KEY } from '../../common/constants/cookie-keys';
 import * as dayjs from 'dayjs';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
-import { SignUpDto } from './dto/sign-up.dto';
-import { validateSignUp } from '../../common/utils/validators';
+import { SignUpDto, signUpDtoSchema } from './dto/sign-up.dto';
 import { RoleGuard } from '../../guards/role.guard';
 import { AvailableRoles } from '../../common/constants/authorization';
 import { Roles } from '../../decorators/roles.decorator';
+import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
 
 @Controller('/auth')
 export class AuthController {
@@ -55,10 +56,8 @@ export class AuthController {
     }
 
     @Post('/signup')
+    @UsePipes(new NopeValidationPipe(signUpDtoSchema))
     async signUp(@Body() signUpDto: SignUpDto, @Res({ passthrough: true }) res: Response) {
-        if (!validateSignUp(signUpDto)) {
-            throw new BadRequestException();
-        }
         const user = await this.authService.createUser({ ...signUpDto });
         if (!user) {
             throw new BadRequestException();

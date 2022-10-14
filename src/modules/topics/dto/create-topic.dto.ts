@@ -5,7 +5,7 @@ export class CreateTopicDto {
     value: string;
 }
 
-export const createTopicTdoSchema = Nope.object().shape({
+export const createTopicDtoSchema = Nope.object().shape({
     value: Nope.string()
         .required()
         .greaterThan(2)
