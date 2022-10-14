@@ -1,4 +1,4 @@
-export class FindManyUsersDto {
+export class PaginationDto {
     limit: number;
     page: number;
 }
