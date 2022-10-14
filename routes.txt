@@ -3,7 +3,8 @@
 /auth/signup - POST
 /auth/refresh - GET?
 /users/ - RUD
-/collections/query? - GET
+
+/collections/?query - GET
 /collections/:id - GET
 /collections/  - POST
 /collections/ - UPDATE
@@ -13,7 +14,7 @@
 /items/ - POST
 /items/ - UPDATE
 /items/ - DELETE
-/comments/ - CRU
+/item/:id/comments - CRU
 /likes/ - CD
 /tags/ - CR
 

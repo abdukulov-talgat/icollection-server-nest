@@ -11,6 +11,5 @@ const signUpSchema = Nope.object().shape({
 });
 
 export const validateSignUp = (signUpDto: SignUpDto) => {
-    console.log(signUpSchema.validate(signUpDto));
     return signUpSchema.validate(signUpDto) === undefined;
 };

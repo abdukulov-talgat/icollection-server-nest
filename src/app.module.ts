@@ -7,6 +7,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Role } from './modules/roles/model/role.model';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { CollectionsModule } from './modules/collections/collections.module';
+import { Topic } from './modules/topics/model/topic.model';
+import { Collection } from './modules/collections/model/collection.model';
+import { TopicsModule } from './modules/topics/topics.module';
 
 @Module({
     imports: [
@@ -17,7 +21,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, RefreshToken, Role],
+            models: [User, RefreshToken, Role, Topic, Collection],
             autoLoadModels: true,
             synchronize: true,
             logging: false,
@@ -25,6 +29,8 @@ import { TasksModule } from './modules/tasks/tasks.module';
         ScheduleModule.forRoot(),
         AuthModule,
         TasksModule,
+        TopicsModule,
+        CollectionsModule,
     ],
 })
 export class AppModule {}

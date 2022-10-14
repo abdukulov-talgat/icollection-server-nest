@@ -9,6 +9,7 @@ import {
     BelongsTo,
 } from 'sequelize-typescript';
 import { Role } from '../../roles/model/role.model';
+import { Collection } from '../../collections/model/collection.model';
 
 @Table
 export class User extends Model {
@@ -33,4 +34,7 @@ export class User extends Model {
 
     @HasMany(() => RefreshToken)
     tokens: RefreshToken[];
+
+    @HasMany(() => Collection)
+    collections: Collection[];
 }

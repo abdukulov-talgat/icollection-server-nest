@@ -16,7 +16,7 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Get()
-    async findMany(@Query() { page, limit }: FindManyUsersDto): Promise<SelectUserDto[]> {
+    async findAll(@Query() { page, limit }: FindManyUsersDto): Promise<SelectUserDto[]> {
         const users = await this.usersService.findAll(page || 1, limit || 5);
         return users.map((u) => new SelectUserDto(u));
     }
