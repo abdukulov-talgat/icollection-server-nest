@@ -26,7 +26,14 @@ export class TokensService {
             where: { token },
             include: {
                 model: User,
-                include: [Role],
+                include: [
+                    {
+                        model: Role,
+                        through: {
+                            attributes: [],
+                        },
+                    },
+                ],
             },
         });
     }

@@ -20,10 +20,10 @@ import { REFRESH_TOKEN_KEY } from '../../common/constants/cookie-keys';
 import * as dayjs from 'dayjs';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
 import { SignUpDto, signUpDtoSchema } from './dto/sign-up.dto';
-import { RoleGuard } from '../../guards/role.guard';
 import { AvailableRoles } from '../../common/constants/authorization';
 import { Roles } from '../../decorators/roles.decorator';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
+import { ACGuard, UseRoles } from 'nest-access-control';
 
 @Controller('/auth')
 export class AuthController {
@@ -72,8 +72,8 @@ export class AuthController {
     }
 
     @Get('/admin')
-    @Roles(AvailableRoles.ADMIN)
-    @UseGuards(AccessJwtGuard, RoleGuard)
+    @UseRoles({ action: 'read', resource: 'admin', possession: 'any' })
+    @UseGuards(AccessJwtGuard, ACGuard)
     async bar() {
         return 'Admin only page';
     }

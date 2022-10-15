@@ -9,11 +9,12 @@ export class PaginationPipe implements PipeTransform {
     constructor(private config: PaginationPipeConfig) {}
 
     transform(value: any, metadata: ArgumentMetadata): any {
-        const result = {
+        let result = {
             page: this.config.defaultPage,
             limit: this.config.defaultLimit,
         };
         if (value) {
+            result = { ...value, ...result };
             result.page = this.sanitize(value.page, this.config.defaultPage);
             result.limit = this.sanitize(value.limit, this.config.defaultLimit);
         }

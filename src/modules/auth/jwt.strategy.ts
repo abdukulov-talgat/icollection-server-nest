@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ACCESS_SECRET } from '../../common/constants/environment';
 import { JwtUserPayload } from './interfaces/jwt-user-payload.interface';
 
@@ -15,6 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     async validate(payload: JwtUserPayload) {
+        if (payload.roles.length === 0) {
+            throw new UnauthorizedException('No role. Should never happen');
+        }
         return payload;
     }
 }

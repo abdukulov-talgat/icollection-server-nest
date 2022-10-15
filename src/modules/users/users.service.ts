@@ -2,28 +2,51 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './model/user.model';
 import { InjectModel } from '@nestjs/sequelize';
-import { Role } from '../roles/model/role.model';
+import { Role, UserRole } from '../roles/model/role.model';
+import { mapPageToOffset } from '../../common/utils/helpers';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User) private userModel: typeof User) {}
+    constructor(
+        @InjectModel(User) private userModel: typeof User,
+        @InjectModel(UserRole) private userRoleModel: typeof UserRole,
+    ) {}
 
     async create({ email, passwordHash, roleId }: CreateUserDto) {
         //sequelize doesn't support eager creating yet https://github.com/sequelize/sequelize/issues/3807
-        const user = await this.userModel.create({ email, passwordHash, roleId });
+        const user = await this.userModel.create({ email, passwordHash });
+        await this.userRoleModel.create({ userId: user.id, roleId: roleId });
         return this.userModel.findOne({ where: { id: user.id }, include: [Role] });
     }
 
     findAll(page: number, limit: number) {
         return this.userModel.findAll({
-            offset: (page - 1) * limit,
+            offset: mapPageToOffset(page, limit),
             limit,
-            include: [Role],
+            include: [
+                {
+                    model: Role,
+                    attributes: [],
+                    through: {
+                        attributes: [],
+                    },
+                },
+            ],
         });
     }
 
     findUserById(id: number) {
-        return this.userModel.findByPk(id, { include: [Role] });
+        return this.userModel.findByPk(id, {
+            include: [
+                {
+                    model: Role,
+                    attributes: [],
+                    through: {
+                        attributes: [],
+                    },
+                },
+            ],
+        });
     }
 
     findUserByEmail(email: string) {
@@ -31,7 +54,15 @@ export class UsersService {
             where: {
                 email,
             },
-            include: [Role],
+            include: [
+                {
+                    model: Role,
+                    attributes: [],
+                    through: {
+                        attributes: [],
+                    },
+                },
+            ],
         });
     }
 

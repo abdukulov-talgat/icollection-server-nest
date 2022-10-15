@@ -14,11 +14,11 @@ import { TopicsService } from './topics.service';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
 import { CreateTopicDto, createTopicDtoSchema } from './dto/create-topic.dto';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
-import { RoleGuard } from '../../guards/role.guard';
 import { Roles } from '../../decorators/roles.decorator';
 import { AvailableRoles } from '../../common/constants/authorization';
 import { EditTopicDto, editTopicDtoSchema } from './dto/edit-topic.dto';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
+import { ACGuard, UseRoles } from 'nest-access-control';
 
 @Controller('topics')
 export class TopicsController {
@@ -30,8 +30,8 @@ export class TopicsController {
     }
 
     @Post()
-    @UseGuards(AccessJwtGuard, RoleGuard)
-    @Roles(AvailableRoles.ADMIN)
+    @UseGuards(AccessJwtGuard, ACGuard)
+    @UseRoles({ action: 'create', resource: 'topic', possession: 'any' })
     @UsePipes(new NopeValidationPipe(createTopicDtoSchema))
     async create(@Body() createTopicDto: CreateTopicDto) {
         const topic = await this.topicsService.create(createTopicDto);
@@ -42,8 +42,8 @@ export class TopicsController {
     }
 
     @Put()
-    @UseGuards(AccessJwtGuard, RoleGuard)
-    @Roles(AvailableRoles.ADMIN)
+    @UseGuards(AccessJwtGuard, ACGuard)
+    @UseRoles({ action: 'update', resource: 'topic', possession: 'any' })
     @UsePipes(new NopeValidationPipe(editTopicDtoSchema))
     async edit(@Body() editTopicDto: EditTopicDto) {
         const editedTopic = await this.topicsService.edit(editTopicDto);
@@ -54,8 +54,8 @@ export class TopicsController {
     }
 
     @Delete(':id')
-    @UseGuards(AccessJwtGuard, RoleGuard)
-    @Roles(AvailableRoles.ADMIN)
+    @UseGuards(AccessJwtGuard, ACGuard)
+    @UseRoles({ action: 'delete', resource: 'topic', possession: 'any' })
     async delete(@Param('id', ParseIdPipe) id: number) {
         const count = await this.topicsService.delete(id);
         if (!count) {

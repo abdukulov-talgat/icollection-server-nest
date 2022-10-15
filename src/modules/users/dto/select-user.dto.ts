@@ -5,12 +5,12 @@ export class SelectUserDto {
     id: number;
     email: string;
     isBanned: boolean;
-    role: AvailableRoles;
+    roles: AvailableRoles[];
 
     constructor(user: User) {
         this.id = user.id;
         this.email = user.email;
         this.isBanned = user.isBanned;
-        this.role = user.role.value as AvailableRoles;
+        this.roles = user.roles.map((r) => r.value) as AvailableRoles[];
     }
 }

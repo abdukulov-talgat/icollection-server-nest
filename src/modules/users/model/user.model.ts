@@ -7,8 +7,9 @@ import {
     Model,
     ForeignKey,
     BelongsTo,
+    BelongsToMany,
 } from 'sequelize-typescript';
-import { Role } from '../../roles/model/role.model';
+import { Role, UserRole } from '../../roles/model/role.model';
 import { Collection } from '../../collections/model/collection.model';
 
 @Table
@@ -25,12 +26,8 @@ export class User extends Model {
     @Column({ defaultValue: false, allowNull: false })
     isBanned: boolean;
 
-    @Column({ allowNull: false, type: DataType.TINYINT({ unsigned: true }) })
-    @ForeignKey(() => Role)
-    roleId: number;
-
-    @BelongsTo(() => Role)
-    role: Role;
+    @BelongsToMany(() => Role, () => UserRole)
+    roles: Role[];
 
     @HasMany(() => RefreshToken)
     tokens: RefreshToken[];

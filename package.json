@@ -40,6 +40,7 @@
     "express-session": "^1.17.3",
     "joi": "^17.6.3",
     "mysql2": "^2.3.3",
+    "nest-access-control": "^2.2.0",
     "nope-validator": "^1.0.4",
     "passport": "^0.6.0",
     "passport-cookie": "^1.0.9",

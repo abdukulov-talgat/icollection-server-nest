@@ -1,24 +1,65 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    NotFoundException,
+    Param,
+    Post,
+    Put,
+    Query,
+    Req,
+    UseGuards,
+    UsePipes,
+} from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
+import { PaginationPipe } from '../../pipes/pagination.pipe';
+import { FindCollectionsQuery } from './dto/find-collections.query';
+import { CreateCollectionDto } from './dto/create-collection.dto';
+import { AccessJwtGuard } from '../../guards/access-jwt.guard';
+import { Request } from 'express';
+import { ACGuard, UseRoles } from 'nest-access-control';
 
 @Controller('collections')
 export class CollectionsController {
     constructor(private collectionsService: CollectionsService) {}
 
     @Get()
-    findByQuery(@Query('userId', ParseIdPipe) userId: number) {
-        return `Collections for user with ${userId} id`;
+    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
+    findAll(@Query() query: FindCollectionsQuery) {
+        try {
+            return this.collectionsService.findAll(query);
+        } catch (e) {
+            console.log(e);
+            throw new BadRequestException('Wrong query?');
+        }
     }
 
     @Get('/:id')
-    findOne(@Param('id', ParseIdPipe) id: number) {
-        return `Get collection with ${id} id`;
+    async findOne(@Param('id', ParseIdPipe) id: number) {
+        const collection = await this.collectionsService.findCollectionById(id);
+        if (collection) {
+            return collection;
+        }
+        throw new NotFoundException();
     }
 
     @Post()
-    create() {
-        return 'Create Collection';
+    @UseGuards(AccessJwtGuard, ACGuard)
+    @UseRoles({ action: 'create', resource: 'collection', possession: 'own' })
+    async create(
+        @Req() req: Request,
+        @Body() createCollectionDto: Omit<CreateCollectionDto, 'userId'>,
+    ) {
+        console.log(JSON.stringify(req.user));
+        const userId = (req.user as any).id as number;
+        const collection = await this.collectionsService.create({ ...createCollectionDto, userId });
+        if (!collection) {
+            throw new BadRequestException();
+        }
+        return collection;
     }
 
     @Put(':id')
