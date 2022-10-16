@@ -22,7 +22,6 @@ export interface CollectionsQuery {
         };
     };
     order?: Order;
-    include: Includeable | Includeable[];
     page?: number;
     limit?: number;
 }
@@ -44,7 +43,6 @@ export class CollectionsQueryDirector {
 export class CollectionsQueryBuilder {
     private result: CollectionsQuery = {
         where: {},
-        include: Topic,
     };
 
     getResult() {

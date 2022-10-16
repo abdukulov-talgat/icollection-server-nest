@@ -7,7 +7,7 @@ export class CreateCollectionDto {
 
     topicId: number;
 
-    userId: number;
-
     customColumns: string;
+
+    userId?: number;
 }
