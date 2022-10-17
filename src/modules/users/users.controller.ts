@@ -8,7 +8,7 @@ import {
     Query,
     UsePipes,
 } from '@nestjs/common';
-import { PaginationDto } from '../../common/dto/pagination.dto';
+import { PaginationQueryOptions } from '../../common/utils/query/query-options';
 import { UsersService } from './users.service';
 import { SelectUserDto } from './dto/select-user.dto';
 import { PaginationPipe } from '../../pipes/pagination.pipe';
@@ -19,8 +19,8 @@ export class UsersController {
 
     @Get()
     @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
-    async findAll(@Query() { page, limit }: PaginationDto): Promise<SelectUserDto[]> {
-        const users = await this.usersService.findAll(page, limit);
+    async findAll(@Query() { page, limit }: PaginationQueryOptions): Promise<SelectUserDto[]> {
+        const users = await this.usersService.findAll(page as number, limit as number);
         return users.map((u) => new SelectUserDto(u));
     }
 

@@ -1,16 +1,8 @@
 import { RefreshToken } from '../../auth/model/refresh-token.model';
-import {
-    Table,
-    Column,
-    DataType,
-    HasMany,
-    Model,
-    ForeignKey,
-    BelongsTo,
-    BelongsToMany,
-} from 'sequelize-typescript';
+import { Table, Column, DataType, HasMany, Model, BelongsToMany } from 'sequelize-typescript';
 import { Role, UserRole } from '../../roles/model/role.model';
 import { Collection } from '../../collections/model/collection.model';
+import { Comment } from '../../items/model/comment.model';
 
 @Table
 export class User extends Model {
@@ -34,4 +26,7 @@ export class User extends Model {
 
     @HasMany(() => Collection)
     collections: Collection[];
+
+    @HasMany(() => Comment)
+    comments: Comment[];
 }

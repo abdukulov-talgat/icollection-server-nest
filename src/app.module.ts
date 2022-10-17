@@ -15,6 +15,7 @@ import { AccessControlModule } from 'nest-access-control';
 import { appRoles } from './common/constants/authorization';
 import { ItemsModule } from './modules/items/items.module';
 import { Item } from './modules/items/model/item.model';
+import { Comment } from './modules/items/model/comment.model';
 
 @Module({
     imports: [
@@ -25,7 +26,7 @@ import { Item } from './modules/items/model/item.model';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item],
+            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item, Comment],
             autoLoadModels: true,
             synchronize: true,
             logging: false,

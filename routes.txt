@@ -14,7 +14,7 @@
 /items/ - POST
 /items/ - UPDATE
 /items/ - DELETE
-/item/:id/comments - CRU
+/items/:id/comments - CRU
 /likes/ - CD
 /tags/ - CR
 

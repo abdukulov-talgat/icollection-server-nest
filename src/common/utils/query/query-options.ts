@@ -1,11 +1,12 @@
 import { Direction } from './direction';
 
-export class QueryOptions {
-    name?: string;
-
-    page?: number;
-
+export class PaginationQueryOptions {
     limit?: number;
+    page?: number;
+}
+
+export class QueryOptions extends PaginationQueryOptions {
+    name?: string;
 
     direction?: Direction;
 

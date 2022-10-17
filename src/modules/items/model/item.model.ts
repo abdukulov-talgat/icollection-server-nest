@@ -1,5 +1,14 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import {
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    HasMany,
+    Model,
+    Table,
+} from 'sequelize-typescript';
 import { Collection } from '../../collections/model/collection.model';
+import { Comment } from './comment.model';
 
 @Table({ timestamps: false })
 export class Item extends Model {
@@ -18,4 +27,7 @@ export class Item extends Model {
 
     @BelongsTo(() => Collection)
     collection: Collection;
+
+    @HasMany(() => Comment)
+    comments: Comment[];
 }

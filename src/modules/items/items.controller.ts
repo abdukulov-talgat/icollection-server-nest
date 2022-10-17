@@ -20,10 +20,8 @@ import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { Request } from 'express';
-import { CreateCollectionDto } from '../collections/dto/create-collection.dto';
 import { resolveResourceOwner } from '../../common/utils/resolve-resource-owner';
 import { SelectUserDto } from '../users/dto/select-user.dto';
-import { EditCollectionDto } from '../collections/dto/edit-collection.dto';
 import { CreateItemDto } from './dto/create-item.dto';
 import { CollectionsService } from '../collections/collections.service';
 import { Resources } from '../../common/constants/authorization';
@@ -35,6 +33,14 @@ export class ItemsController {
         private itemsService: ItemsService,
         private collectionsService: CollectionsService,
     ) {}
+
+    private async isCollectionOwner(collectionId: number, userId: number) {
+        const collection = await this.collectionsService.findCollectionById(collectionId);
+        if (collection && collection.userId === userId) {
+            return true;
+        }
+        return false;
+    }
 
     @Get()
     @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
@@ -116,13 +122,5 @@ export class ItemsController {
             }
         }
         throw new BadRequestException();
-    }
-
-    private async isCollectionOwner(collectionId: number, userId: number) {
-        const collection = await this.collectionsService.findCollectionById(collectionId);
-        if (collection && collection.userId === userId) {
-            return true;
-        }
-        return false;
     }
 }
