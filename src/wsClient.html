@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+          content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Document</title>
+</head>
+<body>
+    <div id='root'></div>
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+<script>
+    const root = document.querySelector('#root');
+    const socket = io('http://localhost:3000', {auth: {itemRoomId: 1}});
+    socket.on('connect', function() {
+        root.innerHTML += 'Connected<br>';
+    });
+    socket.on('app.item.comment.create', function(data) {
+        root.innerHTML += 'msg: ' + JSON.stringify(data) + '<br>'
+    });
+
+    socket.on('exception', function(data) {
+        //??? what should I do?
+       root.innerHTML += 'exception: ' + data + '<br>'
+    });
+    socket.on('disconnect', function() {
+        root.innerHTML += 'Disconnected<br>';
+    });
+</script>
+</body>
+</html>

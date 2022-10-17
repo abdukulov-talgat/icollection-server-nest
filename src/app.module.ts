@@ -16,6 +16,7 @@ import { appRoles } from './common/constants/authorization';
 import { ItemsModule } from './modules/items/items.module';
 import { Item } from './modules/items/model/item.model';
 import { Comment } from './modules/items/model/comment.model';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { Comment } from './modules/items/model/comment.model';
         TopicsModule,
         CollectionsModule,
         ItemsModule,
+        EventEmitterModule.forRoot(),
     ],
 })
 export class AppModule {}

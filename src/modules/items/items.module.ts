@@ -7,10 +7,11 @@ import { CollectionsModule } from '../collections/collections.module';
 import { Comment } from './model/comment.model';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
+import { CommentsGateway } from './comments.gateway';
 
 @Module({
     imports: [SequelizeModule.forFeature([Item, Comment]), CollectionsModule],
-    providers: [ItemsService, CommentsService],
+    providers: [ItemsService, CommentsService, CommentsGateway],
     controllers: [ItemsController, CommentsController],
 })
 export class ItemsModule {}
