@@ -13,6 +13,8 @@ import { Collection } from './modules/collections/model/collection.model';
 import { TopicsModule } from './modules/topics/topics.module';
 import { AccessControlModule } from 'nest-access-control';
 import { appRoles } from './common/constants/authorization';
+import { ItemsModule } from './modules/items/items.module';
+import { Item } from './modules/items/model/item.model';
 
 @Module({
     imports: [
@@ -23,7 +25,7 @@ import { appRoles } from './common/constants/authorization';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, Role, UserRole, RefreshToken, Collection, Topic],
+            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item],
             autoLoadModels: true,
             synchronize: true,
             logging: false,
@@ -34,6 +36,7 @@ import { appRoles } from './common/constants/authorization';
         AccessControlModule.forRoles(appRoles),
         TopicsModule,
         CollectionsModule,
+        ItemsModule,
     ],
 })
 export class AppModule {}

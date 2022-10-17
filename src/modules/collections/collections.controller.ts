@@ -17,17 +17,14 @@ import {
 import { CollectionsService } from './collections.service';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { PaginationPipe } from '../../pipes/pagination.pipe';
-import { FindCollectionsQuery } from './dto/find-collections.query';
 import { CreateCollectionDto } from './dto/create-collection.dto';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { Request } from 'express';
 import { ACGuard, UseRoles } from 'nest-access-control';
-import { User } from '../users/model/user.model';
-import { AvailableRoles } from '../../common/constants/authorization';
 import { SelectUserDto } from '../users/dto/select-user.dto';
-import { isAdmin } from '../../common/utils/auth';
 import { resolveResourceOwner } from '../../common/utils/resolve-resource-owner';
 import { EditCollectionDto } from './dto/edit-collection.dto';
+import { CollectionsQueryOptions } from '../../common/utils/query/query-options';
 
 @Controller('collections')
 export class CollectionsController {
@@ -35,7 +32,7 @@ export class CollectionsController {
 
     @Get()
     @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
-    findAll(@Query() query: FindCollectionsQuery) {
+    findAll(@Query() query: CollectionsQueryOptions) {
         try {
             return this.collectionsService.findAll(query);
         } catch (e) {
@@ -43,7 +40,7 @@ export class CollectionsController {
         }
     }
 
-    @Get('/:id')
+    @Get(':id')
     async findOne(@Param('id', ParseIdPipe) id: number) {
         const collection = await this.collectionsService.findCollectionById(id);
         if (collection) {
@@ -90,7 +87,6 @@ export class CollectionsController {
         @Param('id', ParseIdPipe) id: number,
         @Body('userId') userId?: number,
     ) {
-        console.log('HERE');
         const { userId: resolvedUserId } = resolveResourceOwner(req.user as SelectUserDto, {
             userId: userId,
         });

@@ -14,8 +14,6 @@ import { TopicsService } from './topics.service';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
 import { CreateTopicDto, createTopicDtoSchema } from './dto/create-topic.dto';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
-import { Roles } from '../../decorators/roles.decorator';
-import { AvailableRoles } from '../../common/constants/authorization';
 import { EditTopicDto, editTopicDtoSchema } from './dto/edit-topic.dto';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { ACGuard, UseRoles } from 'nest-access-control';

@@ -1,8 +1,17 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import {
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    HasMany,
+    Model,
+    Table,
+} from 'sequelize-typescript';
 import { Topic } from '../../topics/model/topic.model';
 import { User } from '../../users/model/user.model';
+import { Item } from '../../items/model/item.model';
 
-@Table
+@Table({ timestamps: false })
 export class Collection extends Model {
     @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER({ unsigned: true }) })
     id: number;
@@ -32,4 +41,7 @@ export class Collection extends Model {
 
     @BelongsTo(() => User)
     user: User;
+
+    @HasMany(() => Item)
+    items: Item[];
 }

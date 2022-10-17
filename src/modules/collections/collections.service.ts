@@ -1,24 +1,40 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import sequelize from 'sequelize';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Collection } from './model/collection.model';
-import { CollectionsQueryBuilder, CollectionsQueryDirector } from './collections.helpers';
-import { FindCollectionsQuery } from './dto/find-collections.query';
 import { CreateCollectionDto } from './dto/create-collection.dto';
 import { Topic } from '../topics/model/topic.model';
 import { EditCollectionDto } from './dto/edit-collection.dto';
+import { Item } from '../items/model/item.model';
+import { QueryBuilder } from '../../common/utils/query/query-builder';
+import { QueryDirector } from '../../common/utils/query/query-director';
+import { CollectionsQueryOptions } from '../../common/utils/query/query-options';
 
 @Injectable()
 export class CollectionsService {
     constructor(@InjectModel(Collection) private collectionModel: typeof Collection) {}
 
-    findAll(query: FindCollectionsQuery) {
-        const builder = new CollectionsQueryBuilder();
-        const director = new CollectionsQueryDirector(builder);
-        director.build(query);
+    findAll(query: CollectionsQueryOptions) {
+        const builder = new QueryBuilder();
+        const director = new QueryDirector(builder);
+        director.buildCollectionsQuery(query);
         const sequelizeQuery = builder.getResult();
         return this.collectionModel.findAll({
             ...sequelizeQuery,
-            include: [Topic],
+            attributes: {
+                include: [
+                    [sequelize.fn('COUNT', sequelize.col('items.collectionId')), 'itemsCount'],
+                ],
+            },
+            include: [
+                {
+                    model: Item,
+                    attributes: [],
+                },
+                Topic,
+            ],
+            group: 'id',
+            subQuery: false,
         });
     }
 

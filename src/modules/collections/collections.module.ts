@@ -8,5 +8,6 @@ import { Collection } from './model/collection.model';
     imports: [SequelizeModule.forFeature([Collection])],
     providers: [CollectionsService],
     controllers: [CollectionsController],
+    exports: [CollectionsService],
 })
 export class CollectionsModule {}

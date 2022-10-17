@@ -24,10 +24,10 @@ export const appRoles: RolesBuilder = new RolesBuilder();
 
 appRoles
     .grant(AvailableRoles.USER)
-    .createOwn(Resources.COLLECTIONS)
-    .updateOwn(Resources.COLLECTIONS)
-    .deleteOwn(Resources.COLLECTIONS)
-    .readAny(Resources.COLLECTIONS)
+    .createOwn([Resources.COLLECTIONS, Resources.ITEMS])
+    .updateOwn([Resources.COLLECTIONS, Resources.ITEMS])
+    .deleteOwn([Resources.COLLECTIONS, Resources.ITEMS])
+    .readAny([Resources.COLLECTIONS, Resources.ITEMS])
     .grant(AvailableRoles.ADMIN)
     .extend(AvailableRoles.USER)
     .createAny(Object.values(Resources))

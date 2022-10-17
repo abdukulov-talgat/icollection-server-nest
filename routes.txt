@@ -5,7 +5,7 @@
 /users/ - RUD
 
 /collections/?query - GET
-/collections/:id - GET
+/collections/ - GET
 /collections/  - POST
 /collections/ - UPDATE
 /collections/ - DELETE

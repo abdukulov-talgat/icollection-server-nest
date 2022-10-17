@@ -20,8 +20,6 @@ import { REFRESH_TOKEN_KEY } from '../../common/constants/cookie-keys';
 import * as dayjs from 'dayjs';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
 import { SignUpDto, signUpDtoSchema } from './dto/sign-up.dto';
-import { AvailableRoles } from '../../common/constants/authorization';
-import { Roles } from '../../decorators/roles.decorator';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
 import { ACGuard, UseRoles } from 'nest-access-control';
 
