@@ -17,6 +17,7 @@ import { ItemsModule } from './modules/items/items.module';
 import { Item } from './modules/items/model/item.model';
 import { Comment } from './modules/items/model/comment.model';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Like } from './modules/items/model/like.model';
 
 @Module({
     imports: [
@@ -27,10 +28,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item, Comment],
+            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item, Comment, Like],
             autoLoadModels: true,
             synchronize: true,
-            logging: false,
+            // logging: false,
         }),
         ScheduleModule.forRoot(),
         TasksModule,

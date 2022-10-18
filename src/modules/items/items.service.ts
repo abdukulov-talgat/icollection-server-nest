@@ -1,16 +1,14 @@
-import { Get, Injectable, NotFoundException, Param } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Item } from './model/item.model';
 import { ItemsQueryOptions } from '../../common/utils/query/query-options';
 import { QueryBuilder } from '../../common/utils/query/query-builder';
 import { QueryDirector } from '../../common/utils/query/query-director';
-import { ParseIdPipe } from '../../pipes/parse-id.pipe';
-import { Topic } from '../topics/model/topic.model';
-import { CreateCollectionDto } from '../collections/dto/create-collection.dto';
-import { EditCollectionDto } from '../collections/dto/edit-collection.dto';
 import { Collection } from '../collections/model/collection.model';
 import { CreateItemDto } from './dto/create-item.dto';
 import { EditItemDto } from './dto/edit-item.dto';
+import sequelize from 'sequelize';
+import { Like } from './model/like.model';
 
 @Injectable()
 export class ItemsService {
@@ -27,7 +25,21 @@ export class ItemsService {
     }
 
     findItemById(id: number) {
-        return this.itemModel.findByPk(id, { include: [Collection] });
+        return this.itemModel.findOne({
+            where: {
+                id: id,
+            },
+            attributes: {
+                include: [[sequelize.fn('COUNT', sequelize.col('likes.itemId')), 'likesCount']],
+            },
+            include: [
+                Collection,
+                {
+                    model: Like,
+                    attributes: [],
+                },
+            ],
+        });
     }
 
     async create({ userId, ...rest }: CreateItemDto) {
@@ -58,13 +70,11 @@ export class ItemsService {
     }
 
     async remove(id: number) {
-        try {
-            const count = await this.itemModel.destroy({
-                where: { id: id },
-            });
-            return count === 1;
-        } catch (e) {
-            return null;
+        const exist = await this.itemModel.findByPk(id);
+        if (exist) {
+            await exist.destroy();
+            return true;
         }
+        return false;
     }
 }

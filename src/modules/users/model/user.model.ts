@@ -3,6 +3,7 @@ import { Table, Column, DataType, HasMany, Model, BelongsToMany } from 'sequeliz
 import { Role, UserRole } from '../../roles/model/role.model';
 import { Collection } from '../../collections/model/collection.model';
 import { Comment } from '../../items/model/comment.model';
+import { Like } from '../../items/model/like.model';
 
 @Table
 export class User extends Model {
@@ -29,4 +30,7 @@ export class User extends Model {
 
     @HasMany(() => Comment)
     comments: Comment[];
+
+    @HasMany(() => Like)
+    likes: Like[];
 }

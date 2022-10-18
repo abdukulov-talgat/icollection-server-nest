@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Collection } from '../../collections/model/collection.model';
 import { Comment } from './comment.model';
+import { Like } from './like.model';
 
 @Table({ timestamps: false })
 export class Item extends Model {
@@ -30,4 +31,7 @@ export class Item extends Model {
 
     @HasMany(() => Comment)
     comments: Comment[];
+
+    @HasMany(() => Like)
+    likes: Like[];
 }

@@ -24,7 +24,7 @@ export class CommentsGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     handleConnection(client: Socket): any {
-        client.join(`itemRoom/${client.handshake.auth.itemRoomId}`);
+        client.join(`${ITEM_COMMENTS_ROOM_BASE}/${client.handshake.auth.itemRoomId}`);
     }
 
     handleDisconnect(client: Socket): any {

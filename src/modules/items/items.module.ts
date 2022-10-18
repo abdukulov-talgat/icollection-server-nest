@@ -8,10 +8,13 @@ import { Comment } from './model/comment.model';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { CommentsGateway } from './comments.gateway';
+import { LikesService } from './likes.service';
+import { LikesController } from './likes.controller';
+import { Like } from './model/like.model';
 
 @Module({
-    imports: [SequelizeModule.forFeature([Item, Comment]), CollectionsModule],
-    providers: [ItemsService, CommentsService, CommentsGateway],
-    controllers: [ItemsController, CommentsController],
+    imports: [SequelizeModule.forFeature([Item, Comment, Like]), CollectionsModule],
+    providers: [ItemsService, CommentsService, CommentsGateway, LikesService],
+    controllers: [ItemsController, CommentsController, LikesController],
 })
 export class ItemsModule {}
