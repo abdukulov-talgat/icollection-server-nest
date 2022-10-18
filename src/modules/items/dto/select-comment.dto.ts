@@ -1,5 +1,5 @@
 import { SelectUserDto } from '../../users/dto/select-user.dto';
-import { Comment } from '../model/comment.model';
+import { ItemComment } from '../model/item-comment.model';
 
 export class SelectCommentDto {
     id: number;
@@ -10,7 +10,7 @@ export class SelectCommentDto {
 
     itemId: number;
 
-    constructor(comment: Comment) {
+    constructor(comment: ItemComment) {
         this.id = comment.id;
         this.text = comment.text;
         this.user = new SelectUserDto(comment.user);

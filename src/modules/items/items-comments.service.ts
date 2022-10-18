@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Comment } from './model/comment.model';
+import { ItemComment } from './model/item-comment.model';
 import { mapPageToOffset } from '../../common/utils/helpers';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PaginationQueryOptions } from '../../common/utils/query/query-options';
@@ -11,9 +11,9 @@ import { SelectCommentDto } from './dto/select-comment.dto';
 import { ITEM_COMMENT_CREATE_EVENT } from '../../common/constants/app-events';
 
 @Injectable()
-export class CommentsService {
+export class ItemsCommentsService {
     constructor(
-        @InjectModel(Comment) private commentModel: typeof Comment,
+        @InjectModel(ItemComment) private commentModel: typeof ItemComment,
         private eventEmitter: EventEmitter2,
     ) {}
 
@@ -41,7 +41,7 @@ export class CommentsService {
                     include: [Role],
                 },
             });
-            const commentDto = new SelectCommentDto(comment as Comment);
+            const commentDto = new SelectCommentDto(comment as ItemComment);
             this.eventEmitter.emit(ITEM_COMMENT_CREATE_EVENT, commentDto);
             return commentDto;
         } catch {

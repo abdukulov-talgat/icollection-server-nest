@@ -3,7 +3,7 @@ import { User } from '../../users/model/user.model';
 import { Item } from './item.model';
 
 @Table({ updatedAt: false })
-export class Comment extends Model {
+export class ItemComment extends Model {
     @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER({ unsigned: true }) })
     id: number;
 

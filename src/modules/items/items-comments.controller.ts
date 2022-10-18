@@ -12,7 +12,7 @@ import {
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { Resources } from '../../common/constants/authorization';
-import { CommentsService } from './comments.service';
+import { ItemsCommentsService } from './items-comments.service';
 import { PaginationQueryOptions } from '../../common/utils/query/query-options';
 import { PaginationPipe } from '../../pipes/pagination.pipe';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
@@ -20,8 +20,8 @@ import { Request } from 'express';
 import { SelectUserDto } from '../users/dto/select-user.dto';
 
 @Controller('items/:itemId/comments')
-export class CommentsController {
-    constructor(private commentsService: CommentsService) {}
+export class ItemsCommentsController {
+    constructor(private commentsService: ItemsCommentsService) {}
 
     @Get()
     @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))

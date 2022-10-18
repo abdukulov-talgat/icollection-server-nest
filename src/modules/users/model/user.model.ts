@@ -2,8 +2,8 @@ import { RefreshToken } from '../../auth/model/refresh-token.model';
 import { Table, Column, DataType, HasMany, Model, BelongsToMany } from 'sequelize-typescript';
 import { Role, UserRole } from '../../roles/model/role.model';
 import { Collection } from '../../collections/model/collection.model';
-import { Comment } from '../../items/model/comment.model';
-import { Like } from '../../items/model/like.model';
+import { ItemComment } from '../../items/model/item-comment.model';
+import { ItemLike } from '../../items/model/item-like.model';
 
 @Table
 export class User extends Model {
@@ -28,9 +28,9 @@ export class User extends Model {
     @HasMany(() => Collection)
     collections: Collection[];
 
-    @HasMany(() => Comment)
+    @HasMany(() => ItemComment)
     comments: Comment[];
 
-    @HasMany(() => Like)
-    likes: Like[];
+    @HasMany(() => ItemLike)
+    likes: ItemLike[];
 }

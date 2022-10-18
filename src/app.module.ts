@@ -15,9 +15,12 @@ import { AccessControlModule } from 'nest-access-control';
 import { appRoles } from './common/constants/authorization';
 import { ItemsModule } from './modules/items/items.module';
 import { Item } from './modules/items/model/item.model';
-import { Comment } from './modules/items/model/comment.model';
+import { ItemComment } from './modules/items/model/item-comment.model';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { Like } from './modules/items/model/like.model';
+import { ItemLike } from './modules/items/model/item-like.model';
+import { Tag } from './modules/tags/model/tag.model';
+import { TagsModule } from './modules/tags/tags.module';
+import { ItemTag } from './modules/items/model/item-tag.model';
 
 @Module({
     imports: [
@@ -28,10 +31,22 @@ import { Like } from './modules/items/model/like.model';
             username: DB_USER,
             password: DB_PASSWORD,
             port: DB_PORT,
-            models: [User, Role, UserRole, RefreshToken, Collection, Topic, Item, Comment, Like],
+            models: [
+                User,
+                Role,
+                UserRole,
+                RefreshToken,
+                Collection,
+                Topic,
+                Item,
+                ItemComment,
+                ItemLike,
+                Tag,
+                ItemTag,
+            ],
             autoLoadModels: true,
             synchronize: true,
-            // logging: false,
+            logging: false,
         }),
         ScheduleModule.forRoot(),
         TasksModule,
@@ -41,6 +56,7 @@ import { Like } from './modules/items/model/like.model';
         CollectionsModule,
         ItemsModule,
         EventEmitterModule.forRoot(),
+        TagsModule,
     ],
 })
 export class AppModule {}

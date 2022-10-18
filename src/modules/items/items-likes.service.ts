@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Like } from './model/like.model';
+import { ItemLike } from './model/item-like.model';
 import { FindOptions } from 'sequelize/types/model';
 
 @Injectable()
-export class LikesService {
-    constructor(@InjectModel(Like) private likeModel: typeof Like) {}
+export class ItemsLikesService {
+    constructor(@InjectModel(ItemLike) private likeModel: typeof ItemLike) {}
 
     findOne(options: FindOptions) {
         return this.likeModel.findOne(options);

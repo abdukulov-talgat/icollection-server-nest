@@ -11,7 +11,7 @@ import { ITEM_COMMENT_CREATE_EVENT } from '../../common/constants/app-events';
 import { ITEM_COMMENTS_ROOM_BASE } from '../../common/constants/websocket';
 
 @WebSocketGateway({ cors: { origin: '*' } })
-export class CommentsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ItemsCommentsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server;
 

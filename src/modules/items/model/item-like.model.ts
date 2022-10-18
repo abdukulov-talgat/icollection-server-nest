@@ -3,7 +3,7 @@ import { User } from '../../users/model/user.model';
 import { Item } from './item.model';
 
 @Table({ timestamps: false })
-export class Like extends Model {
+export class ItemLike extends Model {
     @Column({ allowNull: false, type: DataType.INTEGER({ unsigned: true }), primaryKey: true })
     @ForeignKey(() => User)
     userId: number;

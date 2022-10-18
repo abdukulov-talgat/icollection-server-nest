@@ -8,7 +8,7 @@ import { Collection } from '../collections/model/collection.model';
 import { CreateItemDto } from './dto/create-item.dto';
 import { EditItemDto } from './dto/edit-item.dto';
 import sequelize from 'sequelize';
-import { Like } from './model/like.model';
+import { ItemLike } from './model/item-like.model';
 
 @Injectable()
 export class ItemsService {
@@ -35,7 +35,7 @@ export class ItemsService {
             include: [
                 Collection,
                 {
-                    model: Like,
+                    model: ItemLike,
                     attributes: [],
                 },
             ],

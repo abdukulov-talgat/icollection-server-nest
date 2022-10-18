@@ -1,5 +1,6 @@
 import {
     BelongsTo,
+    BelongsToMany,
     Column,
     DataType,
     ForeignKey,
@@ -8,8 +9,10 @@ import {
     Table,
 } from 'sequelize-typescript';
 import { Collection } from '../../collections/model/collection.model';
-import { Comment } from './comment.model';
-import { Like } from './like.model';
+import { ItemComment } from './item-comment.model';
+import { ItemLike } from './item-like.model';
+import { ItemTag } from './item-tag.model';
+import { Tag } from '../../tags/model/tag.model';
 
 @Table({ timestamps: false })
 export class Item extends Model {
@@ -29,9 +32,12 @@ export class Item extends Model {
     @BelongsTo(() => Collection)
     collection: Collection;
 
-    @HasMany(() => Comment)
+    @HasMany(() => ItemComment)
     comments: Comment[];
 
-    @HasMany(() => Like)
-    likes: Like[];
+    @HasMany(() => ItemLike)
+    likes: ItemLike[];
+
+    @BelongsToMany(() => Tag, () => ItemTag)
+    tags: Tag[];
 }

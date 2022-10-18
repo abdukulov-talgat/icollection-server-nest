@@ -7,15 +7,15 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common';
-import { LikesService } from './likes.service';
+import { ItemsLikesService } from './items-likes.service';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { Request } from 'express';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { SelectUserDto } from '../users/dto/select-user.dto';
 
 @Controller('items/:itemId/likes')
-export class LikesController {
-    constructor(private likesService: LikesService) {}
+export class ItemsLikesController {
+    constructor(private likesService: ItemsLikesService) {}
 
     @Post()
     @UseGuards(AccessJwtGuard)

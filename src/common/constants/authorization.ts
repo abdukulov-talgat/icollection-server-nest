@@ -13,7 +13,6 @@ export enum AvailableRoles {
 
 export enum Resources {
     COLLECTIONS = 'collection',
-    ADMIN_PANEL = 'admin',
     TOPICS = 'topics',
     ITEMS = 'items',
     ITEMS_COMMENTS = 'items/comments',

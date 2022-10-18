@@ -17,6 +17,7 @@ import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { EditTopicDto, editTopicDtoSchema } from './dto/edit-topic.dto';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { ACGuard, UseRoles } from 'nest-access-control';
+import { Resources } from '../../common/constants/authorization';
 
 @Controller('topics')
 export class TopicsController {
@@ -29,7 +30,7 @@ export class TopicsController {
 
     @Post()
     @UseGuards(AccessJwtGuard, ACGuard)
-    @UseRoles({ action: 'create', resource: 'topic', possession: 'any' })
+    @UseRoles({ action: 'create', resource: Resources.TOPICS, possession: 'any' })
     @UsePipes(new NopeValidationPipe(createTopicDtoSchema))
     async create(@Body() createTopicDto: CreateTopicDto) {
         const topic = await this.topicsService.create(createTopicDto);
@@ -41,7 +42,7 @@ export class TopicsController {
 
     @Put()
     @UseGuards(AccessJwtGuard, ACGuard)
-    @UseRoles({ action: 'update', resource: 'topic', possession: 'any' })
+    @UseRoles({ action: 'update', resource: Resources.TOPICS, possession: 'any' })
     @UsePipes(new NopeValidationPipe(editTopicDtoSchema))
     async edit(@Body() editTopicDto: EditTopicDto) {
         const editedTopic = await this.topicsService.edit(editTopicDto);
@@ -53,7 +54,7 @@ export class TopicsController {
 
     @Delete(':id')
     @UseGuards(AccessJwtGuard, ACGuard)
-    @UseRoles({ action: 'delete', resource: 'topic', possession: 'any' })
+    @UseRoles({ action: 'delete', resource: Resources.TOPICS, possession: 'any' })
     async delete(@Param('id', ParseIdPipe) id: number) {
         const count = await this.topicsService.delete(id);
         if (!count) {

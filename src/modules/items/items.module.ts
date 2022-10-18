@@ -4,17 +4,17 @@ import { ItemsController } from './items.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Item } from './model/item.model';
 import { CollectionsModule } from '../collections/collections.module';
-import { Comment } from './model/comment.model';
-import { CommentsController } from './comments.controller';
-import { CommentsService } from './comments.service';
-import { CommentsGateway } from './comments.gateway';
-import { LikesService } from './likes.service';
-import { LikesController } from './likes.controller';
-import { Like } from './model/like.model';
+import { ItemComment } from './model/item-comment.model';
+import { ItemsCommentsController } from './items-comments.controller';
+import { ItemsCommentsService } from './items-comments.service';
+import { ItemsCommentsGateway } from './items-comments.gateway';
+import { ItemsLikesService } from './items-likes.service';
+import { ItemsLikesController } from './items-likes.controller';
+import { ItemLike } from './model/item-like.model';
 
 @Module({
-    imports: [SequelizeModule.forFeature([Item, Comment, Like]), CollectionsModule],
-    providers: [ItemsService, CommentsService, CommentsGateway, LikesService],
-    controllers: [ItemsController, CommentsController, LikesController],
+    imports: [SequelizeModule.forFeature([Item, ItemComment, ItemLike]), CollectionsModule],
+    providers: [ItemsService, ItemsCommentsService, ItemsCommentsGateway, ItemsLikesService],
+    controllers: [ItemsController, ItemsCommentsController, ItemsLikesController],
 })
 export class ItemsModule {}
