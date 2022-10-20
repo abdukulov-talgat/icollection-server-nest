@@ -17,3 +17,11 @@ export const REFRESH_SECRET_MAX_DAYS = Number.parseInt(process.env.REFRESH_SECRE
 export const EXPIRED_TOKENS_CLEAR_INTERVAL = Number.parseInt(
     process.env.EXPIRED_TOKENS_CLEAR_INTERVAL || '3600000',
 );
+
+export const ELASTIC_CLIENT_ID =
+    process.env.ELASTIC_CLIENT_ID ||
+    'icollection:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ3YzJiY2QxZjViYTk0ZTE4OWZkMzM5NjFmMWVmZjNkMSQ4NjBhNmNlYTgyZDY0MmEyYWIxNGRhYTAwNDU0YmU5Zg==';
+
+export const ELASTIC_USERNAME = process.env.ELASTIC_USERNAME || 'elastic';
+
+export const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD || 'Dm3nrItEkWfwXyv7VPyFARHS';

@@ -11,9 +11,16 @@ import { ItemsCommentsGateway } from './items-comments.gateway';
 import { ItemsLikesService } from './items-likes.service';
 import { ItemsLikesController } from './items-likes.controller';
 import { ItemLike } from './model/item-like.model';
+import { TagsModule } from '../tags/tags.module';
+import { Tag } from '../tags/model/tag.model';
+import { ItemTag } from './model/item-tag.model';
 
 @Module({
-    imports: [SequelizeModule.forFeature([Item, ItemComment, ItemLike]), CollectionsModule],
+    imports: [
+        SequelizeModule.forFeature([Item, ItemComment, ItemLike, Tag, ItemTag]),
+        CollectionsModule,
+        TagsModule,
+    ],
     providers: [ItemsService, ItemsCommentsService, ItemsCommentsGateway, ItemsLikesService],
     controllers: [ItemsController, ItemsCommentsController, ItemsLikesController],
 })

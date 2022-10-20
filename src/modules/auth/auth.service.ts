@@ -18,6 +18,7 @@ export class AuthService {
     ) {}
 
     async validateUser(email: string, password: string) {
+        debugger;
         const user = await this.usersService.findUserByEmail(email);
         if (user && (await bcrypt.compare(password, user.passwordHash))) {
             return new SelectUserDto(user);

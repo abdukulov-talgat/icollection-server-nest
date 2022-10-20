@@ -26,7 +26,6 @@ export class UsersService {
             include: [
                 {
                     model: Role,
-                    attributes: [],
                     through: {
                         attributes: [],
                     },
@@ -40,7 +39,6 @@ export class UsersService {
             include: [
                 {
                     model: Role,
-                    attributes: [],
                     through: {
                         attributes: [],
                     },
@@ -57,7 +55,6 @@ export class UsersService {
             include: [
                 {
                     model: Role,
-                    attributes: [],
                     through: {
                         attributes: [],
                     },

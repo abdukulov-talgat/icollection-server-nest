@@ -23,7 +23,7 @@ export class Item extends Model {
     name: string;
 
     @Column({ allowNull: true, type: DataType.JSON() })
-    customColumns: string;
+    customColumns?: Array<unknown>;
 
     @Column({ allowNull: false, type: DataType.INTEGER({ unsigned: true }) })
     @ForeignKey(() => Collection)

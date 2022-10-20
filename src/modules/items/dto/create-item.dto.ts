@@ -1,9 +1,11 @@
 export class CreateItemDto {
     name: string;
 
-    customColumns: string;
+    customColumns?: string;
 
     collectionId: number;
 
     userId?: number;
+
+    tags: string[];
 }

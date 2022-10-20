@@ -115,7 +115,7 @@ export class ItemsController {
         });
         const item = await this.itemsService.findItemById(id);
         if (item && (await this.isCollectionOwner(item.collectionId, resolvedUserId as number))) {
-            await item.destroy();
+            await this.itemsService.remove(item.id);
             return { result: true, message: `Item with ID ${id} is deleted` };
         }
         throw new BadRequestException();

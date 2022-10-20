@@ -7,12 +7,54 @@ import { QueryDirector } from '../../common/utils/query/query-director';
 import { Collection } from '../collections/model/collection.model';
 import { CreateItemDto } from './dto/create-item.dto';
 import { EditItemDto } from './dto/edit-item.dto';
-import sequelize from 'sequelize';
+import sequelize, { Op, Transaction } from 'sequelize';
 import { ItemLike } from './model/item-like.model';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AppEvents } from '../../common/constants/app-events';
+import { ItemTag } from './model/item-tag.model';
+import { TagsService } from '../tags/tags.service';
+import { Tag } from '../tags/model/tag.model';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class ItemsService {
-    constructor(@InjectModel(Item) private itemModel: typeof Item) {}
+    constructor(
+        private sequelize: Sequelize,
+        @InjectModel(Item) private itemModel: typeof Item,
+        @InjectModel(Tag) private tagModel: typeof Tag,
+        @InjectModel(ItemTag) private itemTagModel: typeof ItemTag,
+        private tagsService: TagsService,
+        private eventEmitter: EventEmitter2,
+    ) {}
+
+    private async bindItemWithTags(item: Item, tags: string[]) {
+        if (tags.length === 0) {
+            return;
+        }
+        await this.tagModel.bulkCreate(
+            tags.map((v) => ({ value: v })),
+            { ignoreDuplicates: true },
+        );
+        const createdTags = await this.tagModel.findAll({
+            where: {
+                value: {
+                    [Op.or]: tags,
+                },
+            },
+        });
+        await this.itemTagModel.bulkCreate(
+            createdTags.map((t) => ({ tagId: t.id, itemId: item.id })),
+        );
+    }
+
+    private async unbindItemWithTags(item: Item) {
+        const count = await this.itemTagModel.destroy({
+            where: {
+                itemId: item.id,
+            },
+        });
+        return count;
+    }
 
     findAll(query: ItemsQueryOptions) {
         const builder = new QueryBuilder();
@@ -21,6 +63,14 @@ export class ItemsService {
         const sequelizeQuery = builder.getResult();
         return this.itemModel.findAll({
             ...sequelizeQuery,
+            include: [
+                {
+                    model: Tag,
+                    through: {
+                        attributes: [],
+                    },
+                },
+            ],
         });
     }
 
@@ -38,43 +88,84 @@ export class ItemsService {
                     model: ItemLike,
                     attributes: [],
                 },
+                {
+                    model: Tag,
+                    through: {
+                        attributes: [],
+                    },
+                },
             ],
         });
     }
 
-    async create({ userId, ...rest }: CreateItemDto) {
+    async create({ userId, tags, ...rest }: CreateItemDto) {
         try {
-            return await this.itemModel.create({
+            const item = await this.itemModel.create({
                 ...rest,
             });
+            await this.bindItemWithTags(item, tags);
+            const newItem = await this.itemModel.findByPk(item.id, {
+                include: [
+                    {
+                        model: Tag,
+                        through: {
+                            attributes: [],
+                        },
+                    },
+                ],
+            });
+            this.eventEmitter.emit(AppEvents.ITEM_CREATE_EVENT, newItem);
+            return newItem;
         } catch (e) {
             return null;
         }
     }
 
-    async edit({ id, userId, collectionId, ...body }: EditItemDto) {
+    async edit({ id, userId, collectionId, tags, ...body }: EditItemDto) {
         try {
-            const item = await this.itemModel.findOne({
+            const exist = await this.itemModel.findOne({
                 where: {
                     id: id,
                     collectionId: collectionId,
                 },
             });
-            if (item) {
-                return await item.update({ ...body });
+            if (!exist) {
+                return null;
             }
-            return null;
+
+            await exist.update({ ...body });
+            await this.unbindItemWithTags(exist);
+            await this.bindItemWithTags(exist, tags);
+
+            const updatedItem = await this.itemModel.findByPk(exist.id, {
+                include: [
+                    {
+                        model: Tag,
+                        through: {
+                            attributes: [],
+                        },
+                    },
+                ],
+            });
+            this.eventEmitter.emit(AppEvents.ITEM_EDIT_EVENT, updatedItem);
+            return updatedItem;
         } catch (e) {
             return null;
         }
     }
 
     async remove(id: number) {
-        const exist = await this.itemModel.findByPk(id);
-        if (exist) {
-            await exist.destroy();
+        debugger;
+        try {
+            await this.itemModel.destroy({
+                where: {
+                    id: id,
+                },
+            });
+            this.eventEmitter.emit(AppEvents.ITEM_DELETE_EVENT, id);
             return true;
+        } catch (e) {
+            return false;
         }
-        return false;
     }
 }

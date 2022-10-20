@@ -21,6 +21,7 @@ import { ItemLike } from './modules/items/model/item-like.model';
 import { Tag } from './modules/tags/model/tag.model';
 import { TagsModule } from './modules/tags/tags.module';
 import { ItemTag } from './modules/items/model/item-tag.model';
+import { SearchModule } from './modules/search/search.module';
 
 @Module({
     imports: [
@@ -55,8 +56,9 @@ import { ItemTag } from './modules/items/model/item-tag.model';
         TopicsModule,
         CollectionsModule,
         ItemsModule,
-        EventEmitterModule.forRoot(),
+        EventEmitterModule.forRoot({ wildcard: true }),
         TagsModule,
+        SearchModule,
     ],
 })
 export class AppModule {}

@@ -9,10 +9,15 @@ import { Item } from '../items/model/item.model';
 import { QueryBuilder } from '../../common/utils/query/query-builder';
 import { QueryDirector } from '../../common/utils/query/query-director';
 import { CollectionsQueryOptions } from '../../common/utils/query/query-options';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AppEvents } from '../../common/constants/app-events';
 
 @Injectable()
 export class CollectionsService {
-    constructor(@InjectModel(Collection) private collectionModel: typeof Collection) {}
+    constructor(
+        @InjectModel(Collection) private collectionModel: typeof Collection,
+        private eventEmitter: EventEmitter2,
+    ) {}
 
     findAll(query: CollectionsQueryOptions) {
         const builder = new QueryBuilder();
@@ -44,9 +49,14 @@ export class CollectionsService {
 
     async create(createCollectionDto: CreateCollectionDto) {
         try {
-            return await this.collectionModel.create({
+            const newCollection = await this.collectionModel.create({
                 ...createCollectionDto,
             });
+            const result = await this.collectionModel.findByPk(newCollection.id, {
+                include: [Topic],
+            });
+            this.eventEmitter.emit(AppEvents.COLLECTION_CREATE_EVENT, result);
+            return result;
         } catch (e) {
             return null;
         }
@@ -59,9 +69,12 @@ export class CollectionsService {
                     id: id,
                     userId: userId,
                 },
+                include: [Topic],
             });
             if (collection) {
-                return await collection.update({ ...body });
+                const updated = await collection.update({ ...body });
+                this.eventEmitter.emit(AppEvents.COLLECTION_EDIT_EVENT, updated);
+                return updated;
             }
             return null;
         } catch (e) {
@@ -71,10 +84,14 @@ export class CollectionsService {
 
     async remove(id: number, userId: number) {
         try {
-            const count = await this.collectionModel.destroy({
+            const candidate = await this.collectionModel.findOne({
                 where: { id: id, userId: userId },
             });
-            return count === 1;
+            if (candidate) {
+                await candidate.destroy();
+                this.eventEmitter.emit(AppEvents.COLLECTION_DELETE_EVENT, id);
+                return true;
+            }
         } catch (e) {
             return null;
         }

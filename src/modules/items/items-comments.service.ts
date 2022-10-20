@@ -8,7 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { User } from '../users/model/user.model';
 import { Role } from '../roles/model/role.model';
 import { SelectCommentDto } from './dto/select-comment.dto';
-import { ITEM_COMMENT_CREATE_EVENT } from '../../common/constants/app-events';
+import { AppEvents } from '../../common/constants/app-events';
 
 @Injectable()
 export class ItemsCommentsService {
@@ -42,7 +42,7 @@ export class ItemsCommentsService {
                 },
             });
             const commentDto = new SelectCommentDto(comment as ItemComment);
-            this.eventEmitter.emit(ITEM_COMMENT_CREATE_EVENT, commentDto);
+            this.eventEmitter.emit(AppEvents.ITEM_COMMENT_CREATE_EVENT, commentDto);
             return commentDto;
         } catch {
             return null;
