@@ -18,9 +18,8 @@ export class AuthService {
     ) {}
 
     async validateUser(email: string, password: string) {
-        debugger;
         const user = await this.usersService.findUserByEmail(email);
-        if (user && (await bcrypt.compare(password, user.passwordHash))) {
+        if (user && (await bcrypt.compare(password, user.passwordHash)) && !user.isBanned) {
             return new SelectUserDto(user);
         }
         return null;

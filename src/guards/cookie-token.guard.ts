@@ -14,7 +14,7 @@ export class CookieTokenGuard implements CanActivate {
             const request = context.switchToHttp().getRequest<Request>();
             const requestToken = request.cookies[REFRESH_TOKEN_KEY];
             const dbToken = await this.tokensService.findTokenByToken(requestToken);
-            if (dbToken && !isExpired(dbToken.expiredAt)) {
+            if (dbToken && !isExpired(dbToken.expiredAt) && !dbToken.user.isBanned) {
                 request.user = new SelectUserDto(dbToken.user);
                 return true;
             }

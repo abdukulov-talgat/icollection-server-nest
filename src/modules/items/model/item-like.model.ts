@@ -12,7 +12,7 @@ export class ItemLike extends Model {
     @ForeignKey(() => Item)
     itemId: number;
 
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, { onDelete: 'CASCADE' })
     user: User;
 
     @BelongsTo(() => Item)

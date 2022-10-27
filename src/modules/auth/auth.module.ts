@@ -21,7 +21,7 @@ import { RolesModule } from '../roles/roles.module';
         JwtModule.register({
             secret: ACCESS_SECRET,
             signOptions: {
-                expiresIn: '3000m',
+                expiresIn: '10s',
             },
         }),
     ],

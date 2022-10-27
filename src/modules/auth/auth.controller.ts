@@ -63,16 +63,10 @@ export class AuthController {
         return this.handleTokenRequest(new SelectUserDto(user), res);
     }
 
-    @Get('/')
-    @UseGuards(AccessJwtGuard)
-    async foo() {
-        return 'JWT Guard';
-    }
-
-    @Get('/admin')
-    @UseRoles({ action: 'read', resource: 'admin', possession: 'any' })
-    @UseGuards(AccessJwtGuard, ACGuard)
-    async bar() {
-        return 'Admin only page';
+    @Get('/signout')
+    async signOut(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        await this.tokensService.deleteTokenByToken(req.cookies[REFRESH_TOKEN_KEY]);
+        res.clearCookie(REFRESH_TOKEN_KEY);
+        return { result: true, message: 'Cookie was deleted' };
     }
 }

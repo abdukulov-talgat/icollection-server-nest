@@ -58,6 +58,7 @@ export class CollectionsService {
             this.eventEmitter.emit(AppEvents.COLLECTION_CREATE_EVENT, result);
             return result;
         } catch (e) {
+            console.log(e.message);
             return null;
         }
     }

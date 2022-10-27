@@ -5,6 +5,10 @@ export class PaginationQueryOptions {
     page?: number;
 }
 
+export class TagsQueryOptions extends PaginationQueryOptions {
+    like?: string;
+}
+
 export class QueryOptions extends PaginationQueryOptions {
     name?: string;
 

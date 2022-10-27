@@ -14,7 +14,7 @@ import { ItemLike } from './item-like.model';
 import { ItemTag } from './item-tag.model';
 import { Tag } from '../../tags/model/tag.model';
 
-@Table({ timestamps: false })
+@Table
 export class Item extends Model {
     @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER({ unsigned: true }) })
     id: number;
@@ -29,7 +29,7 @@ export class Item extends Model {
     @ForeignKey(() => Collection)
     collectionId: number;
 
-    @BelongsTo(() => Collection)
+    @BelongsTo(() => Collection, { onDelete: 'CASCADE' })
     collection: Collection;
 
     @HasMany(() => ItemComment)

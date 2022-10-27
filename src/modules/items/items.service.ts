@@ -7,7 +7,7 @@ import { QueryDirector } from '../../common/utils/query/query-director';
 import { Collection } from '../collections/model/collection.model';
 import { CreateItemDto } from './dto/create-item.dto';
 import { EditItemDto } from './dto/edit-item.dto';
-import sequelize, { Op, Transaction } from 'sequelize';
+import sequelize, { Op } from 'sequelize';
 import { ItemLike } from './model/item-like.model';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from '../../common/constants/app-events';
@@ -15,6 +15,7 @@ import { ItemTag } from './model/item-tag.model';
 import { TagsService } from '../tags/tags.service';
 import { Tag } from '../tags/model/tag.model';
 import { Sequelize } from 'sequelize-typescript';
+import { User } from '../users/model/user.model';
 
 @Injectable()
 export class ItemsService {
@@ -63,9 +64,28 @@ export class ItemsService {
         const sequelizeQuery = builder.getResult();
         return this.itemModel.findAll({
             ...sequelizeQuery,
+            attributes: {
+                include: [
+                    [sequelize.col('collection.name'), 'collectionName'],
+                    [sequelize.col('collection.user.email'), 'userEmail'],
+                ],
+            },
             include: [
                 {
+                    model: Collection,
+                    required: true,
+                    attributes: [],
+                    include: [
+                        {
+                            model: User,
+                            required: true,
+                            attributes: ['id', 'email', 'isBanned'],
+                        },
+                    ],
+                },
+                {
                     model: Tag,
+                    required: true,
                     through: {
                         attributes: [],
                     },
@@ -155,7 +175,6 @@ export class ItemsService {
     }
 
     async remove(id: number) {
-        debugger;
         try {
             await this.itemModel.destroy({
                 where: {
@@ -163,6 +182,27 @@ export class ItemsService {
                 },
             });
             this.eventEmitter.emit(AppEvents.ITEM_DELETE_EVENT, id);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async removeAllItemsForCollection(collectionId: number) {
+        try {
+            const deletedIds = await this.itemModel.findAll({
+                where: { collectionId: collectionId },
+                attributes: ['id'],
+            });
+            await this.itemModel.destroy({
+                where: {
+                    collectionId: collectionId,
+                },
+            });
+            this.eventEmitter.emit(
+                AppEvents.ITEM_DELETE_MANY_ITEMS_EVENT,
+                deletedIds.map((i) => i.id),
+            );
             return true;
         } catch (e) {
             return false;

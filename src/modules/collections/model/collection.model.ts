@@ -26,7 +26,7 @@ export class Collection extends Model {
     imageSrc: string;
 
     @Column({ allowNull: true, type: DataType.JSON })
-    customColumns: string;
+    customColumns: { type: string; name: string };
 
     @Column({ allowNull: false, type: DataType.SMALLINT({ unsigned: true }) })
     @ForeignKey(() => Topic)
@@ -39,7 +39,7 @@ export class Collection extends Model {
     @BelongsTo(() => Topic)
     topic: Topic;
 
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, { onDelete: 'CASCADE' })
     user: User;
 
     @HasMany(() => Item)

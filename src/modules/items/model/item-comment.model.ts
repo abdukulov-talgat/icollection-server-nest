@@ -14,7 +14,7 @@ export class ItemComment extends Model {
     @ForeignKey(() => User)
     userId: number;
 
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, { onDelete: 'CASCADE' })
     user: User;
 
     @Column({ allowNull: false, type: DataType.INTEGER({ unsigned: true }) })

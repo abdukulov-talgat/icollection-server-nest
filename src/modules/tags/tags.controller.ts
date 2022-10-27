@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
 import { TagsService } from './tags.service';
+import { PaginationPipe } from '../../pipes/pagination.pipe';
+import { TagsQueryOptions } from '../../common/utils/query/query-options';
 
 @Controller('tags')
 export class TagsController {
@@ -11,7 +13,8 @@ export class TagsController {
     }
 
     @Get()
-    findAll(@Query('like') like?: string) {
-        return this.tagsService.findAll(like);
+    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
+    findAll(@Query() query: TagsQueryOptions) {
+        return this.tagsService.findAll(query);
     }
 }

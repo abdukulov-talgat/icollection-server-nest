@@ -17,6 +17,7 @@ export enum Resources {
     ITEMS = 'items',
     ITEMS_COMMENTS = 'items/comments',
     ITEMS_LIKES = 'items/likes',
+    USERS = 'users',
 }
 
 export const appRoles: RolesBuilder = new RolesBuilder();

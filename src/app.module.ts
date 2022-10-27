@@ -22,6 +22,8 @@ import { Tag } from './modules/tags/model/tag.model';
 import { TagsModule } from './modules/tags/tags.module';
 import { ItemTag } from './modules/items/model/item-tag.model';
 import { SearchModule } from './modules/search/search.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -59,6 +61,9 @@ import { SearchModule } from './modules/search/search.module';
         EventEmitterModule.forRoot({ wildcard: true }),
         TagsModule,
         SearchModule,
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'client'),
+        }),
     ],
 })
 export class AppModule {}

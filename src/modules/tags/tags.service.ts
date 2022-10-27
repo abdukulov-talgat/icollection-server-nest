@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Tag } from './model/tag.model';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Op } from 'sequelize';
+import { TagsQueryOptions } from '../../common/utils/query/query-options';
+import { mapPageToOffset } from '../../common/utils/helpers';
 
 @Injectable()
 export class TagsService {
@@ -18,13 +20,15 @@ export class TagsService {
         );
     }
 
-    async findAll(like?: string) {
+    async findAll({ page, like, limit }: TagsQueryOptions) {
         return this.tagModel.findAll({
             where: {
                 value: {
                     [Op.substring]: like || '',
                 },
             },
+            limit: limit,
+            offset: mapPageToOffset(page as number, limit as number),
         });
     }
 }

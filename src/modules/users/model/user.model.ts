@@ -4,6 +4,7 @@ import { Role, UserRole } from '../../roles/model/role.model';
 import { Collection } from '../../collections/model/collection.model';
 import { ItemComment } from '../../items/model/item-comment.model';
 import { ItemLike } from '../../items/model/item-like.model';
+import { Item } from '../../items/model/item.model';
 
 @Table
 export class User extends Model {
@@ -25,12 +26,12 @@ export class User extends Model {
     @HasMany(() => RefreshToken)
     tokens: RefreshToken[];
 
-    @HasMany(() => Collection)
+    @HasMany(() => Collection, { onDelete: 'CASCADE' })
     collections: Collection[];
 
-    @HasMany(() => ItemComment)
-    comments: Comment[];
+    @HasMany(() => ItemComment, { onDelete: 'CASCADE' })
+    comments: ItemComment[];
 
-    @HasMany(() => ItemLike)
+    @HasMany(() => ItemLike, { onDelete: 'CASCADE' })
     likes: ItemLike[];
 }

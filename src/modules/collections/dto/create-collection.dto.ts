@@ -1,3 +1,5 @@
+import Nope from 'nope-validator';
+
 export class CreateCollectionDto {
     name: string;
 
@@ -7,7 +9,17 @@ export class CreateCollectionDto {
 
     topicId: number;
 
-    customColumns: string;
+    customColumns?: string;
 
     userId?: number;
 }
+
+export const createCollectionDtoSchema = Nope.object().shape({
+    name: Nope.string().required(),
+
+    description: Nope.string().required(),
+
+    topicId: Nope.number().required().greaterThan(0),
+
+    userId: Nope.number().greaterThan(0),
+});

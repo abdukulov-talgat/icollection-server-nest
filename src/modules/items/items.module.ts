@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { ItemsController } from './items.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -18,10 +18,11 @@ import { ItemTag } from './model/item-tag.model';
 @Module({
     imports: [
         SequelizeModule.forFeature([Item, ItemComment, ItemLike, Tag, ItemTag]),
-        CollectionsModule,
+        forwardRef(() => CollectionsModule),
         TagsModule,
     ],
     providers: [ItemsService, ItemsCommentsService, ItemsCommentsGateway, ItemsLikesService],
     controllers: [ItemsController, ItemsCommentsController, ItemsLikesController],
+    exports: [ItemsService],
 })
 export class ItemsModule {}
