@@ -3,16 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './model/user.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Role, UserRole } from '../roles/model/role.model';
-import { mapPageToOffset } from '../../common/utils/helpers';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { RolesService } from '../roles/roles.service';
 import { AvailableRoles } from '../../common/constants/authorization';
+import { AppEvents } from '../../common/constants/app-events';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Collection } from '../collections/model/collection.model';
+import { Item } from '../items/model/item.model';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(User) private userModel: typeof User,
         @InjectModel(UserRole) private userRoleModel: typeof UserRole,
+        private eventEmitter: EventEmitter2,
         private rolesService: RolesService,
     ) {}
 
@@ -40,10 +44,8 @@ export class UsersService {
         return this.findUserById(id);
     }
 
-    findAll(page: number, limit: number) {
+    findAll() {
         return this.userModel.findAll({
-            offset: mapPageToOffset(page, limit),
-            limit,
             include: [
                 {
                     model: Role,
@@ -84,10 +86,21 @@ export class UsersService {
         });
     }
 
-    deleteUserById(id: number) {
-        return this.userModel.destroy({
-            where: { id },
+    async deleteUserById(id: number) {
+        const candidate = await this.userModel.findByPk(id, {
+            include: [
+                {
+                    model: Collection,
+                    include: [Item],
+                },
+            ],
         });
+        if (candidate) {
+            await candidate.destroy();
+            this.eventEmitter.emit(AppEvents.USER_DELETE, candidate);
+            return true;
+        }
+        return false;
     }
 
     countUsers() {

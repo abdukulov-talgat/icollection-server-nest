@@ -5,10 +5,6 @@ export class PaginationQueryOptions {
     page?: number;
 }
 
-export class TagsQueryOptions extends PaginationQueryOptions {
-    like?: string;
-}
-
 export class QueryOptions extends PaginationQueryOptions {
     name?: string;
 
@@ -17,8 +13,14 @@ export class QueryOptions extends PaginationQueryOptions {
     order?: string;
 }
 
-export class ItemsQueryOptions extends QueryOptions {
+export class ItemsQueryOptions {
     collectionId?: number;
+
+    name?: string;
+
+    direction?: Direction;
+
+    order?: string;
 }
 
 export class CollectionsQueryOptions extends QueryOptions {

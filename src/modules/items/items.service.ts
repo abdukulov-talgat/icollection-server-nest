@@ -16,6 +16,7 @@ import { TagsService } from '../tags/tags.service';
 import { Tag } from '../tags/model/tag.model';
 import { Sequelize } from 'sequelize-typescript';
 import { User } from '../users/model/user.model';
+import { Topic } from '../topics/model/topic.model';
 
 @Injectable()
 export class ItemsService {
@@ -24,6 +25,7 @@ export class ItemsService {
         @InjectModel(Item) private itemModel: typeof Item,
         @InjectModel(Tag) private tagModel: typeof Tag,
         @InjectModel(ItemTag) private itemTagModel: typeof ItemTag,
+        @InjectModel(ItemLike) private itemLikeModel: typeof ItemLike,
         private tagsService: TagsService,
         private eventEmitter: EventEmitter2,
     ) {}
@@ -49,12 +51,11 @@ export class ItemsService {
     }
 
     private async unbindItemWithTags(item: Item) {
-        const count = await this.itemTagModel.destroy({
+        return await this.itemTagModel.destroy({
             where: {
                 itemId: item.id,
             },
         });
-        return count;
     }
 
     findAll(query: ItemsQueryOptions) {
@@ -85,7 +86,6 @@ export class ItemsService {
                 },
                 {
                     model: Tag,
-                    required: true,
                     through: {
                         attributes: [],
                     },
@@ -99,11 +99,49 @@ export class ItemsService {
             where: {
                 id: id,
             },
-            attributes: {
-                include: [[sequelize.fn('COUNT', sequelize.col('likes.itemId')), 'likesCount']],
+            include: [
+                {
+                    model: Collection,
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'email'],
+                        },
+                        Topic,
+                    ],
+                },
+                {
+                    model: ItemLike,
+                    attributes: [],
+                },
+                {
+                    model: Tag,
+                    through: {
+                        attributes: [],
+                    },
+                },
+            ],
+        });
+    }
+
+    findManyByIds(ids: number[]) {
+        return this.itemModel.findAll({
+            where: {
+                [Op.or]: {
+                    id: ids,
+                },
             },
             include: [
-                Collection,
+                {
+                    model: Collection,
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'email'],
+                        },
+                        Topic,
+                    ],
+                },
                 {
                     model: ItemLike,
                     attributes: [],
@@ -156,6 +194,7 @@ export class ItemsService {
             await exist.update({ ...body });
             await this.unbindItemWithTags(exist);
             await this.bindItemWithTags(exist, tags);
+            console.log('EXISTS');
 
             const updatedItem = await this.itemModel.findByPk(exist.id, {
                 include: [
@@ -207,5 +246,10 @@ export class ItemsService {
         } catch (e) {
             return false;
         }
+    }
+
+    async getLikesInfo(itemId: number, userId?: any) {
+        const likes = await this.itemLikeModel.findAll({ where: { itemId: itemId } });
+        return [likes.length, likes.filter((like) => like.userId === userId).length !== 0];
     }
 }

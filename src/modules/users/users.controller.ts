@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -7,14 +8,11 @@ import {
     Param,
     ParseIntPipe,
     Patch,
-    Query,
     UseGuards,
     UsePipes,
 } from '@nestjs/common';
-import { PaginationQueryOptions } from '../../common/utils/query/query-options';
 import { UsersService } from './users.service';
 import { SelectUserDto } from './dto/select-user.dto';
-import { PaginationPipe } from '../../pipes/pagination.pipe';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { ACGuard, UseRoles } from 'nest-access-control';
 import { Resources } from '../../common/constants/authorization';
@@ -26,16 +24,9 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Get()
-    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
-    @UseGuards(AccessJwtGuard, ACGuard)
-    @UseRoles({ action: 'read', resource: Resources.USERS, possession: 'any' })
-    async findAll(@Query() { page, limit }: PaginationQueryOptions) {
-        const users = await this.usersService.findAll(page as number, limit as number);
-        const total = await this.usersService.countUsers();
-        return {
-            total: total,
-            data: users.map((u) => new SelectUserDto(u)),
-        };
+    async findAll() {
+        const users = await this.usersService.findAll();
+        return users.map((u) => new SelectUserDto(u));
     }
 
     @Get(':id')
@@ -52,13 +43,15 @@ export class UsersController {
     @UseRoles({ action: 'update', resource: Resources.USERS, possession: 'any' })
     @UsePipes(new NopeValidationPipe(patchUserDtoSchema))
     async edit(@Body() patchUserDto: PatchUserDto) {
-        const user = await this.usersService.edit(patchUserDto);
-        return user;
+        return await this.usersService.edit(patchUserDto);
     }
 
     @Delete(':id')
     async deleteOne(@Param('id') id: number): Promise<string> {
-        await this.usersService.deleteUserById(id);
-        return `User with id: ${id} was deleted`;
+        const result = await this.usersService.deleteUserById(id);
+        if (result) {
+            return `User with id: ${id} was deleted`;
+        }
+        throw new BadRequestException();
     }
 }

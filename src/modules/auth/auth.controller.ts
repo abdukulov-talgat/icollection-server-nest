@@ -12,7 +12,6 @@ import {
 import { Request, Response } from 'express';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { SelectUserDto } from '../users/dto/select-user.dto';
 import { TokensService } from './tokens.service';
 import { CookieTokenGuard } from '../../guards/cookie-token.guard';
@@ -21,7 +20,6 @@ import * as dayjs from 'dayjs';
 import { REFRESH_SECRET_MAX_DAYS } from '../../common/constants/environment';
 import { SignUpDto, signUpDtoSchema } from './dto/sign-up.dto';
 import { NopeValidationPipe } from '../../pipes/nope-validation.pipe';
-import { ACGuard, UseRoles } from 'nest-access-control';
 
 @Controller('/auth')
 export class AuthController {

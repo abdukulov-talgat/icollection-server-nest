@@ -34,7 +34,6 @@ export class AuthService {
     }
 
     async createUser({ email, password }: Omit<SignUpDto, 'passwordRepeat'>) {
-        debugger;
         const exist = await this.usersService.findUserByEmail(email);
         if (!exist) {
             const { id: roleId } = (await this.rolesService.findRoleByValue(

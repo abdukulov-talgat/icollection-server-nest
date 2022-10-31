@@ -1,1 +1,1 @@
-export const AvailableTopics = ['books', 'coins', 'movies'];
+export const AvailableTopics = ['books', 'coins', 'movies', 'cars', 'silverware'];

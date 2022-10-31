@@ -7,4 +7,5 @@ export const AppEvents = {
     ITEM_DELETE_EVENT: 'app.item.delete',
     ITEM_DELETE_MANY_ITEMS_EVENT: 'app.item.delete-many',
     ITEM_COMMENT_CREATE_EVENT: 'app.item.comment.create',
+    USER_DELETE: 'app.user.delete',
 };

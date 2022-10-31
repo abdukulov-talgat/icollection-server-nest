@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ItemComment } from './model/item-comment.model';
-import { mapPageToOffset } from '../../common/utils/helpers';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { PaginationQueryOptions } from '../../common/utils/query/query-options';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { User } from '../users/model/user.model';
 import { Role } from '../roles/model/role.model';
@@ -17,17 +15,15 @@ export class ItemsCommentsService {
         private eventEmitter: EventEmitter2,
     ) {}
 
-    async findAll(itemId: number, { page, limit }: PaginationQueryOptions) {
+    async findAll(itemId: number) {
         const comments = await this.commentModel.findAll({
             where: {
                 itemId: itemId,
             },
-            offset: mapPageToOffset(page as number, limit as number),
             include: {
                 model: User,
                 include: [Role],
             },
-            limit: limit,
         });
         return comments.map((c) => new SelectCommentDto(c));
     }
@@ -42,7 +38,7 @@ export class ItemsCommentsService {
                 },
             });
             const commentDto = new SelectCommentDto(comment as ItemComment);
-            this.eventEmitter.emit(AppEvents.ITEM_COMMENT_CREATE_EVENT, commentDto);
+            this.eventEmitter.emit(AppEvents.ITEM_COMMENT_CREATE_EVENT, comment);
             return commentDto;
         } catch {
             return null;

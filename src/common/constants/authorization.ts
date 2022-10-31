@@ -2,8 +2,6 @@ import { RolesBuilder } from 'nest-access-control';
 
 export const SALT_ROUNDS = 10;
 
-export const ROLE_KEY = 'roles';
-
 export const REFRESH_SECRET_LENGTH = 64;
 
 export enum AvailableRoles {

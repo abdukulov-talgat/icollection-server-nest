@@ -23,7 +23,7 @@ export class Item extends Model {
     name: string;
 
     @Column({ allowNull: true, type: DataType.JSON() })
-    customColumns?: Array<unknown>;
+    customColumns?: Record<string, string>;
 
     @Column({ allowNull: false, type: DataType.INTEGER({ unsigned: true }) })
     @ForeignKey(() => Collection)
@@ -33,7 +33,7 @@ export class Item extends Model {
     collection: Collection;
 
     @HasMany(() => ItemComment)
-    comments: Comment[];
+    comments: ItemComment[];
 
     @HasMany(() => ItemLike)
     likes: ItemLike[];

@@ -3,9 +3,7 @@ import {
     Body,
     Controller,
     Delete,
-    forwardRef,
     Get,
-    Inject,
     NotFoundException,
     Param,
     Post,
@@ -13,10 +11,8 @@ import {
     Query,
     Req,
     UseGuards,
-    UsePipes,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
-import { PaginationPipe } from '../../pipes/pagination.pipe';
 import { ItemsQueryOptions } from '../../common/utils/query/query-options';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
@@ -28,6 +24,8 @@ import { CreateItemDto } from './dto/create-item.dto';
 import { CollectionsService } from '../collections/collections.service';
 import { Resources } from '../../common/constants/authorization';
 import { EditItemDto } from './dto/edit-item.dto';
+import * as jwt from 'jsonwebtoken';
+import { ACCESS_SECRET } from '../../common/constants/environment';
 
 @Controller('items')
 export class ItemsController {
@@ -45,8 +43,7 @@ export class ItemsController {
     }
 
     @Get()
-    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
-    findAll(@Query() query: ItemsQueryOptions) {
+    async findAll(@Query() query: ItemsQueryOptions) {
         try {
             return this.itemsService.findAll(query);
         } catch (e) {
@@ -55,10 +52,17 @@ export class ItemsController {
     }
 
     @Get(':id')
-    async findOne(@Param('id', ParseIdPipe) id: number) {
-        const collection = await this.itemsService.findItemById(id);
-        if (collection) {
-            return collection;
+    async findOne(@Req() req: Request, @Param('id', ParseIdPipe) id: number) {
+        const item = await this.itemsService.findItemById(id);
+        const userId = this.resolveUserId(req);
+        if (item) {
+            const [count, alreadyLiked] = await this.itemsService.getLikesInfo(item.id, userId);
+            const json = item.toJSON();
+            return {
+                ...json,
+                likesCount: count,
+                alreadyLiked: alreadyLiked,
+            };
         }
         throw new NotFoundException();
     }
@@ -95,11 +99,12 @@ export class ItemsController {
             editItemDto.userId as number,
         );
         if (!isOwner) {
-            throw new BadRequestException();
+            throw new BadRequestException('NOT OWNER');
         }
+        console.log(editItemDto);
         const item = await this.itemsService.edit(editItemDto);
         if (!item) {
-            throw new BadRequestException();
+            throw new BadRequestException('CANT EDIT ITEM');
         }
         return editItemDto;
     }
@@ -121,5 +126,16 @@ export class ItemsController {
             return { result: true, message: `Item with ID ${id} is deleted` };
         }
         throw new BadRequestException();
+    }
+
+    private resolveUserId(req: Request) {
+        let userId = -1;
+        if (req.headers.authorization) {
+            const user = jwt.verify(req.headers.authorization.split(' ')[1], ACCESS_SECRET, {
+                ignoreExpiration: true,
+            }) as SelectUserDto;
+            userId = user.id;
+        }
+        return userId;
     }
 }

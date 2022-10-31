@@ -11,6 +11,7 @@ import { QueryDirector } from '../../common/utils/query/query-director';
 import { CollectionsQueryOptions } from '../../common/utils/query/query-options';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppEvents } from '../../common/constants/app-events';
+import { ItemComment } from '../items/model/item-comment.model';
 
 @Injectable()
 export class CollectionsService {
@@ -87,10 +88,16 @@ export class CollectionsService {
         try {
             const candidate = await this.collectionModel.findOne({
                 where: { id: id, userId: userId },
+                include: [
+                    {
+                        model: Item,
+                        include: [ItemComment],
+                    },
+                ],
             });
             if (candidate) {
                 await candidate.destroy();
-                this.eventEmitter.emit(AppEvents.COLLECTION_DELETE_EVENT, id);
+                this.eventEmitter.emit(AppEvents.COLLECTION_DELETE_EVENT, candidate);
                 return true;
             }
         } catch (e) {
