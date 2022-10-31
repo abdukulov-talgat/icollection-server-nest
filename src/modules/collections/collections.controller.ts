@@ -19,7 +19,6 @@ import {
 } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { ParseIdPipe } from '../../pipes/parse-id.pipe';
-import { PaginationPipe } from '../../pipes/pagination.pipe';
 import { CreateCollectionDto, createCollectionDtoSchema } from './dto/create-collection.dto';
 import { AccessJwtGuard } from '../../guards/access-jwt.guard';
 import { Request } from 'express';
@@ -48,7 +47,6 @@ export class CollectionsController {
     };
 
     @Get()
-    @UsePipes(new PaginationPipe({ defaultPage: 1, defaultLimit: 5 }))
     findAll(@Query() query: CollectionsQueryOptions) {
         try {
             return this.collectionsService.findAll(query);

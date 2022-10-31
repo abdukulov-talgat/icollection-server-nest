@@ -23,6 +23,12 @@ export class ItemsQueryOptions {
     order?: string;
 }
 
-export class CollectionsQueryOptions extends QueryOptions {
+export class CollectionsQueryOptions {
     userId?: number;
+
+    name?: string;
+
+    direction?: Direction;
+
+    order?: string;
 }

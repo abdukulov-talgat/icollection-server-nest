@@ -11,6 +11,7 @@ import { ItemCommentSearchDto } from './dto/item-comment-search.dto';
 import { ItemComment } from '../items/model/item-comment.model';
 import { User } from '../users/model/user.model';
 import { ItemsService } from '../items/items.service';
+import { SearchHit } from '@elastic/elasticsearch/lib/api/types';
 
 @Injectable()
 export class SearchService implements OnModuleInit {
@@ -256,7 +257,7 @@ export class SearchService implements OnModuleInit {
                 },
             },
         });
-        return result.hits.hits.map((hit) => ({ index: hit._index, data: hit._source }));
+        return this.resolveSearchIndices(result.hits.hits);
     }
 
     async tags(query: string) {
@@ -269,6 +270,16 @@ export class SearchService implements OnModuleInit {
             },
         });
         const itemIds = result.hits.hits.map((hit) => (hit._source as any).id);
+        return this.itemsService.findManyByIds(itemIds);
+    }
+
+    private resolveSearchIndices(hits: SearchHit<any>[]) {
+        // const collectionIds = []; //TODO: Finish this later
+        const itemIds: number[] = [];
+        hits.forEach((hit) => {
+            if (hit._index === ElasticIndices.ITEMS) itemIds.push(hit._source.id);
+            else if (hit._index === ElasticIndices.ITEMS_COMMENTS) itemIds.push(hit._source.itemId);
+        });
         return this.itemsService.findManyByIds(itemIds);
     }
 }

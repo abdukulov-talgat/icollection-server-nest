@@ -11,7 +11,7 @@ export class SearchController {
     }
 
     @Get('tags')
-    async searchInTags(@Query('query') query: string) {
-        return this.searchService.tags(query);
+    async tags(@Query('tags') tags: string) {
+        return this.searchService.tags(tags);
     }
 }
