@@ -7,6 +7,7 @@ import {
     ELASTIC_USERNAME,
 } from '../../common/constants/environment';
 import { SearchController } from './search.controller';
+import { ItemsModule } from '../items/items.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { SearchController } from './search.controller';
                 password: ELASTIC_PASSWORD,
             },
         }),
+        ItemsModule,
     ],
     providers: [SearchService],
     controllers: [SearchController],

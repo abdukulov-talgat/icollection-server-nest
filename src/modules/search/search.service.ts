@@ -9,12 +9,28 @@ import { Item } from '../items/model/item.model';
 import { ItemSearchDto } from './dto/item-search.dto';
 import { ItemCommentSearchDto } from './dto/item-comment-search.dto';
 import { ItemComment } from '../items/model/item-comment.model';
+import { User } from '../users/model/user.model';
+import { ItemsService } from '../items/items.service';
 
 @Injectable()
 export class SearchService implements OnModuleInit {
-    constructor(private elasticsearchService: ElasticsearchService) {}
+    constructor(
+        private elasticsearchService: ElasticsearchService,
+        private itemsService: ItemsService,
+    ) {}
+
+    private async dropIndices() {
+        await this.elasticsearchService.indices.delete({
+            index: [
+                ElasticIndices.ITEMS,
+                ElasticIndices.ITEMS_COMMENTS,
+                ElasticIndices.COLLECTIONS,
+            ],
+        });
+    }
 
     async onModuleInit() {
+        // await this.dropIndices();
         await this.ensureIndicesExist();
     }
 
@@ -67,6 +83,10 @@ export class SearchService implements OnModuleInit {
                             type: 'long',
                             index: false,
                         },
+                        collectionId: {
+                            type: 'long',
+                            index: false,
+                        },
                         name: {
                             type: 'text',
                         },
@@ -102,22 +122,68 @@ export class SearchService implements OnModuleInit {
                             type: 'long',
                             index: false,
                         },
+                        userId: {
+                            type: 'long',
+                            index: false,
+                        },
                     },
                 },
             });
         }
     }
 
-    async search(query: string) {
-        const result = await this.elasticsearchService.search({
-            index: Object.values(ElasticIndices).join(),
+    private async deleteCommentsByItemIds(itemIds: number[]) {
+        await this.elasticsearchService.deleteByQuery({
+            index: ElasticIndices.ITEMS_COMMENTS,
             query: {
-                simple_query_string: {
-                    query: `${query}~${SEARCH_FUZZINESS}`,
+                terms: {
+                    itemId: itemIds,
                 },
             },
         });
-        return result.hits.hits.map((hit) => ({ index: hit._index, data: hit._source }));
+    }
+
+    private async deleteItemsByCollectionIds(collectionIds: number[]) {
+        await this.elasticsearchService.deleteByQuery({
+            index: ElasticIndices.ITEMS,
+            query: {
+                terms: {
+                    collectionId: collectionIds,
+                },
+            },
+        });
+    }
+
+    private async deleteCollectionsByUserId(userId: number) {
+        await this.elasticsearchService.deleteByQuery({
+            index: ElasticIndices.COLLECTIONS,
+            query: {
+                terms: {
+                    userId: [userId],
+                },
+            },
+        });
+    }
+
+    private async deleteCommentsByUserId(userId: number) {
+        await this.elasticsearchService.deleteByQuery({
+            index: ElasticIndices.ITEMS_COMMENTS,
+            query: {
+                terms: {
+                    userId: [userId],
+                },
+            },
+        });
+    }
+
+    @OnEvent(AppEvents.USER_DELETE)
+    async handleUserDelete(user: User) {
+        await this.deleteCollectionsByUserId(user.id);
+        await this.deleteItemsByCollectionIds(user.collections.map((c) => c.id));
+        await this.deleteCommentsByUserId(user.id);
+        await this.deleteCommentsByItemIds(
+            user.collections.flatMap((col) => col.items.map((it) => it.id)),
+        );
     }
 
     @OnEvent(AppEvents.COLLECTION_CREATE_EVENT)
@@ -136,11 +202,15 @@ export class SearchService implements OnModuleInit {
     }
 
     @OnEvent(AppEvents.COLLECTION_DELETE_EVENT)
-    async handleCollectionDelete(id: number) {
+    async handleCollectionDelete(collection: Collection) {
+        const itemIds = collection.items.map((it) => it.id);
+        const collectionIds = [collection.id];
         await this.elasticsearchService.delete({
             index: ElasticIndices.COLLECTIONS,
-            id: id.toString(),
+            id: collection.id.toString(),
         });
+        await this.deleteCommentsByItemIds(itemIds);
+        await this.deleteItemsByCollectionIds(collectionIds);
     }
 
     @OnEvent(AppEvents.ITEM_CREATE_EVENT)
@@ -164,6 +234,7 @@ export class SearchService implements OnModuleInit {
             index: ElasticIndices.ITEMS,
             id: id.toString(),
         });
+        await this.deleteCommentsByItemIds([id]);
     }
 
     @OnEvent(AppEvents.ITEM_COMMENT_CREATE_EVENT)
@@ -174,5 +245,30 @@ export class SearchService implements OnModuleInit {
             id: dto.id.toString(),
             document: dto,
         });
+    }
+
+    async search(query: string) {
+        const result = await this.elasticsearchService.search({
+            index: Object.values(ElasticIndices).join(),
+            query: {
+                simple_query_string: {
+                    query: `${query}~${SEARCH_FUZZINESS}`,
+                },
+            },
+        });
+        return result.hits.hits.map((hit) => ({ index: hit._index, data: hit._source }));
+    }
+
+    async tags(query: string) {
+        const result = await this.elasticsearchService.search({
+            index: ElasticIndices.ITEMS,
+            query: {
+                term: {
+                    tags: query || '',
+                },
+            },
+        });
+        const itemIds = result.hits.hits.map((hit) => (hit._source as any).id);
+        return this.itemsService.findManyByIds(itemIds);
     }
 }

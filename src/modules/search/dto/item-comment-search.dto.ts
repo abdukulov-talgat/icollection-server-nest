@@ -7,9 +7,12 @@ export class ItemCommentSearchDto {
 
     itemId: number;
 
+    userId: number;
+
     constructor(comment: ItemComment) {
         this.id = comment.id;
         this.text = comment.text;
         this.itemId = comment.itemId;
+        this.userId = comment.userId;
     }
 }

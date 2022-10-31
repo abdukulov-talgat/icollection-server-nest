@@ -3,19 +3,19 @@ import { Item } from '../../items/model/item.model';
 export class ItemSearchDto {
     id: number;
 
+    collectionId: number;
+
     name: string;
 
-    customColumns?: string[];
+    customColumns: string[] | null;
 
     tags: string[];
 
-    constructor({ id, name, customColumns, tags }: Item) {
-        console.log(customColumns);
+    constructor({ id, collectionId, name, customColumns, tags }: Item) {
         this.id = id;
+        this.collectionId = collectionId;
         this.name = name;
-        this.customColumns =
-            customColumns &&
-            (customColumns.filter((it: unknown) => typeof it === 'string') as string[]);
+        this.customColumns = customColumns ? Object.values(customColumns) : null;
         this.tags = tags.map((t) => t.value);
     }
 }
